@@ -2,44 +2,44 @@
 #include "catch.hpp"
 #include "USART_fake.hpp"
 #include "Commands_fake.hpp"
-#include "../onChip/onChip.h"
+#include "embcli.h"
 
-TEST_CASE("Test onChip_init") 
+TEST_CASE("Test cli_init") 
 {
-    onChip_Cfg cfg;
+    cli_cfg cfg;
 
     SECTION("Pass with correct argument")
     {
         cfg = {USART_write_char, USART_read_char};
-        REQUIRE(ONCHIP_STATUS_SUCCESS == onChip_init(&cfg));
+        REQUIRE(CLI_STATUS_SUCCESS == cli_init(&cfg));
     }
 
     SECTION("Test null argument")
     {
         cfg = {NULL, USART_read_char};
-        REQUIRE(ONCHIP_STATUS_FAIL == onChip_init(&cfg));
+        REQUIRE(CLI_STATUS_FAIL == cli_init(&cfg));
     }
 
     SECTION("Test null argument")
     {
         cfg = {USART_write_char, NULL};
-        REQUIRE(ONCHIP_STATUS_FAIL == onChip_init(&cfg));
+        REQUIRE(CLI_STATUS_FAIL == cli_init(&cfg));
     }
 }
 
-TEST_CASE("Test onChip_receive_cmd") 
+TEST_CASE("Test cli_receive_cmd") 
 {
-    onChip_Cfg cfg;
-    onChip_Status status;
+    cli_cfg cfg;
+    cli_status status;
     uint8_t buf[100];
 
     USART_mock.Reset();
     
-    // init onChip module
+    // init cli module
     cfg = {USART_write_char, \
            USART_read_char};
 
-    onChip_init(&cfg);
+    cli_init(&cfg);
 
     SECTION("Receive string with length=6")
     {   
@@ -47,11 +47,11 @@ TEST_CASE("Test onChip_receive_cmd")
         When(Method(USART_mock, read_char)).Return(0x06,0xFF,0xFF,0xFF,0xFF,0xFF,'\n');
 
         // Receive command
-        status = onChip_receive_cmd(buf);
+        status = cli_receive_cmd(buf);
         
         // Check for success and length matching
-        REQUIRE(ONCHIP_STATUS_SUCCESS == status);
-        REQUIRE(0x06 == ((onChip_in *)buf)->length);
+        REQUIRE(CLI_STATUS_SUCCESS == status);
+        REQUIRE(0x06 == ((cli_in *)buf)->length);
     }
 
     SECTION("Receive string with length=100")
@@ -69,20 +69,20 @@ TEST_CASE("Test onChip_receive_cmd")
                                                    0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,'\n');
 
         // Receive command
-        status = onChip_receive_cmd(buf);
+        status = cli_receive_cmd(buf);
         
         // Check for success and length matching
-        REQUIRE(ONCHIP_STATUS_SUCCESS == status);
-        REQUIRE(100 == ((onChip_in *)buf)->length);
+        REQUIRE(CLI_STATUS_SUCCESS == status);
+        REQUIRE(100 == ((cli_in *)buf)->length);
 
         // Check that Group\Id was received correctly
-        REQUIRE(0x00 == ((onChip_in *)buf)->command.group);
-        REQUIRE(0x01 == ((onChip_in *)buf)->command.id);
+        REQUIRE(0x00 == ((cli_in *)buf)->command.group);
+        REQUIRE(0x01 == ((cli_in *)buf)->command.id);
 
         // Checl data field was received correctly
         for (uint8_t i=0; i<97; i++)
         {
-            REQUIRE(((onChip_in *)buf)->command.data[i] == 0xFF);
+            REQUIRE(((cli_in *)buf)->command.data[i] == 0xFF);
         }  
     }
 
@@ -92,10 +92,10 @@ TEST_CASE("Test onChip_receive_cmd")
         When(Method(USART_mock, read_char)).Return(0x01);
 
         // Receive command
-        status = onChip_receive_cmd(buf);
+        status = cli_receive_cmd(buf);
         
         // Check for success and length matching
-        REQUIRE(ONCHIP_STATUS_ERROR_WRONG_HEADER == status);
+        REQUIRE(CLI_STATUS_ERROR_WRONG_HEADER == status);
     }
 
     SECTION("Fail receiving only length + group fields")
@@ -104,26 +104,26 @@ TEST_CASE("Test onChip_receive_cmd")
         When(Method(USART_mock, read_char)).Return(0x02, 0x00);
 
         // Receive command
-        status = onChip_receive_cmd(buf);
+        status = cli_receive_cmd(buf);
         
         // Check for success and length matching
-        REQUIRE(ONCHIP_STATUS_ERROR_WRONG_HEADER == status);
+        REQUIRE(CLI_STATUS_ERROR_WRONG_HEADER == status);
     }
 }
 
-TEST_CASE( "Test onChip_transmit_rsp") 
+TEST_CASE( "Test cli_transmit_rsp") 
 {
-    onChip_Cfg cfg;
-    onChip_Status status;
-    onChip_out outString;
+    cli_cfg cfg;
+    cli_status status;
+    cli_out outString;
 
     USART_mock.Reset();
     
-    // init onChip module
+    // init cli module
     cfg = {USART_write_char, \
            USART_read_char};
 
-    onChip_init(&cfg);
+    cli_init(&cfg);
 
     SECTION("Check various transfer length")
     {
@@ -132,7 +132,7 @@ TEST_CASE( "Test onChip_transmit_rsp")
         Fake(Method(USART_mock, write_char));
         
         // Init response
-        outString.status = ONCHIP_STATUS_SUCCESS;
+        outString.status = CLI_STATUS_SUCCESS;
         outString.response.length = (uint8_t) rspLength;
 
         // Fill response with data
@@ -142,7 +142,7 @@ TEST_CASE( "Test onChip_transmit_rsp")
         }
 
         // Transfer response
-        onChip_transmit_rsp(&outString);
+        cli_transmit_rsp(&outString);
 
         // Check that all bytes have been sent
         Verify(Method(USART_mock, write_char)).Exactly(rspLength+2);
@@ -165,22 +165,22 @@ TEST_CASE( "Test onChip_transmit_rsp")
     }
 }
 
-TEST_CASE( "Test onChip_command_handler") 
+TEST_CASE( "Test cli_command_handler") 
 {
-    onChip_Cfg cfg;
-    onChip_Status status;
-    onChip_in  inString;
-    onChip_out outString;
+    cli_cfg cfg;
+    cli_status status;
+    cli_in  inString;
+    cli_out outString;
     uint8_t i;
 
     USART_mock.Reset();
     Commands_mock.Reset();
     
-    // init onChip module
+    // init cli module
     cfg = {USART_write_char, \
            USART_read_char};
 
-    onChip_init(&cfg);
+    cli_init(&cfg);
 
     SECTION("Call all entries in the CmdTable")
     {
@@ -190,7 +190,7 @@ TEST_CASE( "Test onChip_command_handler")
         auto LENGTH = GENERATE(take(10, random(0,99)));
         
         // Mock the Test<ID> to copy input buffer into output buffer
-        When(Method(Commands_mock, CmdTest)).Do([](uint8_t n, uint8_t *pInBuf, onChip_Rsp *pOutRsp)->onChip_Status
+        When(Method(Commands_mock, CmdTest)).Do([](uint8_t n, uint8_t *pInBuf, cli_rsp *pOutRsp)->cli_status
         {  
             // Read input length 
             uint8_t len = pInBuf[0];
@@ -205,7 +205,7 @@ TEST_CASE( "Test onChip_command_handler")
             pOutRsp->length  = len;
 
             // Update response status
-            return ONCHIP_STATUS_SUCCESS;
+            return CLI_STATUS_SUCCESS;
         });
 
         // Init input string to call "Test<ID>"
@@ -222,14 +222,14 @@ TEST_CASE( "Test onChip_command_handler")
         }
 
         // Decode input string and call handler
-        onChip_command_handler(&inString, &outString);
+        cli_command_handler(&inString, &outString);
 
         // Check that "Test<ID>" was called with right parameters
-        Verify(Method(Commands_mock, CmdTest).Using((uint8_t)ID, (uint8_t *)&inString.command.data[0], (onChip_Rsp *)&outString.response)).Exactly(1);
+        Verify(Method(Commands_mock, CmdTest).Using((uint8_t)ID, (uint8_t *)&inString.command.data[0], (cli_rsp *)&outString.response)).Exactly(1);
 
         // Check response and status returned
         REQUIRE(outString.response.length  == LENGTH);
-        REQUIRE(outString.status == ONCHIP_STATUS_SUCCESS);
+        REQUIRE(outString.status == CLI_STATUS_SUCCESS);
         for (i=1; i<=LENGTH; i++)
         {
             REQUIRE(outString.response.data[i] == (uint8_t)~inString.command.data[i]);
@@ -251,22 +251,22 @@ TEST_CASE( "Test onChip_command_handler")
         Fake(Method(Commands_mock, CmdTest));
 
         // Decode input string and call handler
-        onChip_command_handler(&inString, &outString);
+        cli_command_handler(&inString, &outString);
 
         // Check if no function was called 
         VerifyNoOtherInvocations(Method(Commands_mock, CmdTest));
 
         // Check response and status returned
-        REQUIRE(outString.status == ONCHIP_STATUS_ERROR_CMD_NOT_EXIST);
+        REQUIRE(outString.status == CLI_STATUS_ERROR_CMD_NOT_EXIST);
         REQUIRE(outString.response.length == 0);
     }
 }
 
 
-TEST_CASE( "Test onChip_transceive") 
+TEST_CASE( "Test cli_transceive") 
 {
-    onChip_Cfg cfg;
-    onChip_Status status;
+    cli_cfg cfg;
+    cli_status status;
     uint8_t inBuf[100];
     uint8_t outBuf[100];
 
@@ -274,9 +274,9 @@ TEST_CASE( "Test onChip_transceive")
     USART_mock.Reset();
     Commands_mock.Reset();
     
-    // init onChip module
+    // init cli module
     cfg = {USART_write_char, USART_read_char};
-    onChip_init(&cfg);
+    cli_init(&cfg);
 
     SECTION("Call all entries in the CmdTable")
     {
@@ -289,31 +289,31 @@ TEST_CASE( "Test onChip_transceive")
         Fake(Method(USART_mock, write_char));
 
         // Mock all test function to return with success and 0 length
-        When(Method(Commands_mock, CmdTest)).Do([](uint8_t n, uint8_t *pInBuf, onChip_Rsp *pOutRsp)->onChip_Status
+        When(Method(Commands_mock, CmdTest)).Do([](uint8_t n, uint8_t *pInBuf, cli_rsp *pOutRsp)->cli_status
         {
             pOutRsp->length = 0;
-            return ONCHIP_STATUS_SUCCESS;
+            return CLI_STATUS_SUCCESS;
         });
 
         // Test complete receive + decode + transmit
-        status = onChip_transceive(inBuf, outBuf);
+        status = cli_transceive(inBuf, outBuf);
 
         // Check that return status is OK
-        REQUIRE(status == ONCHIP_STATUS_SUCCESS);
+        REQUIRE(status == CLI_STATUS_SUCCESS);
 
         // Check that "Test<ID>" was called with right parameters
-        Verify(Method(Commands_mock, CmdTest).Using((uint8_t) ID, &((onChip_in *)inBuf)->command.data[0], &((onChip_out *)outBuf)->response)).Exactly(1);
+        Verify(Method(Commands_mock, CmdTest).Using((uint8_t) ID, &((cli_in *)inBuf)->command.data[0], &((cli_out *)outBuf)->response)).Exactly(1);
 
         // Check that only length + status was trasnmitted
         Verify(Method(USART_mock,write_char)).Exactly(2);
 
         // Check that length + status was transmitted in the right order
-        Verify(Method(USART_mock,write_char).Using(((onChip_out *)outBuf)->response.length +2) + \
-               Method(USART_mock,write_char).Using(((onChip_out *)outBuf)->status)).Exactly(1);
+        Verify(Method(USART_mock,write_char).Using(((cli_out *)outBuf)->response.length +2) + \
+               Method(USART_mock,write_char).Using(((cli_out *)outBuf)->status)).Exactly(1);
 
         // Check response and status returned
-        REQUIRE( ((onChip_out *)outBuf)->response.length == 0);
-        REQUIRE( ((onChip_out *)outBuf)->status == ONCHIP_STATUS_SUCCESS);
+        REQUIRE( ((cli_out *)outBuf)->response.length == 0);
+        REQUIRE( ((cli_out *)outBuf)->status == CLI_STATUS_SUCCESS);
     }
 
     SECTION("Copy input string data to output response")
@@ -333,7 +333,7 @@ TEST_CASE( "Test onChip_transceive")
         Fake(Method(USART_mock, write_char));
 
         // Mock all test function to echo the input string data
-        When(Method(Commands_mock, CmdTest)).Do([](uint8_t n, uint8_t *pInBuf, onChip_Rsp *pOutRsp)->onChip_Status
+        When(Method(Commands_mock, CmdTest)).Do([](uint8_t n, uint8_t *pInBuf, cli_rsp *pOutRsp)->cli_status
         {
             // First byte is total number of data bytes
             pOutRsp->length = pInBuf[0];
@@ -344,30 +344,30 @@ TEST_CASE( "Test onChip_transceive")
                 pOutRsp->data[i] = pInBuf[i];
             }
 
-            return ONCHIP_STATUS_SUCCESS;
+            return CLI_STATUS_SUCCESS;
         });
 
         // Test complete receive + decode + transmit
-        status = onChip_transceive(inBuf, outBuf);
+        status = cli_transceive(inBuf, outBuf);
 
         // Check that return status is OK
-        REQUIRE(status == ONCHIP_STATUS_SUCCESS);
+        REQUIRE(status == CLI_STATUS_SUCCESS);
 
         // Check that "Test<ID>" was called with right parameters
-        Verify(Method(Commands_mock, CmdTest).Using((uint8_t) ID, &((onChip_in *)inBuf)->command.data[0], &((onChip_out *)outBuf)->response)).Exactly(1);
+        Verify(Method(Commands_mock, CmdTest).Using((uint8_t) ID, &((cli_in *)inBuf)->command.data[0], &((cli_out *)outBuf)->response)).Exactly(1);
 
         // Check that only length + status + data was trasnmitted
         Verify(Method(USART_mock,write_char)).Exactly(49);
 
         // Check that length + status + data was transmitted in the right order
-        Verify(Method(USART_mock,write_char).Using(((onChip_out *)outBuf)->response.length +2) + \
-               Method(USART_mock,write_char).Using(((onChip_out *)outBuf)->status)             + \
+        Verify(Method(USART_mock,write_char).Using(((cli_out *)outBuf)->response.length +2) + \
+               Method(USART_mock,write_char).Using(((cli_out *)outBuf)->status)             + \
                Method(USART_mock,write_char).Using(0x2F)                                       + \
                Method(USART_mock,write_char).Using(0xFF) * 0x2E).Exactly(1);
 
         // Check response and status returned
-        REQUIRE(((onChip_out *)outBuf)->response.length  == 0x2F);
-        REQUIRE(((onChip_out *)outBuf)->status == ONCHIP_STATUS_SUCCESS);
+        REQUIRE(((cli_out *)outBuf)->response.length  == 0x2F);
+        REQUIRE(((cli_out *)outBuf)->status == CLI_STATUS_SUCCESS);
     }
 
     SECTION("Error - Command not exist")
@@ -383,22 +383,22 @@ TEST_CASE( "Test onChip_transceive")
         Fake(Method(Commands_mock, CmdTest));
 
         // Test complete receive + decode + transmit
-        status = onChip_transceive(inBuf, outBuf);
+        status = cli_transceive(inBuf, outBuf);
 
         // Check that return status is error
-        REQUIRE(                        status == ONCHIP_STATUS_ERROR_CMD_NOT_EXIST);
-        REQUIRE(((onChip_out *)outBuf)->status == ONCHIP_STATUS_ERROR_CMD_NOT_EXIST);
+        REQUIRE(                        status == CLI_STATUS_ERROR_CMD_NOT_EXIST);
+        REQUIRE(((cli_out *)outBuf)->status == CLI_STATUS_ERROR_CMD_NOT_EXIST);
 
 
         // Check response length is 0
-        REQUIRE(((onChip_out *)outBuf)->response.length == 0);
+        REQUIRE(((cli_out *)outBuf)->response.length == 0);
 
         // Check that "Test<ID>" was called with right parameters
         VerifyNoOtherInvocations(Method(Commands_mock, CmdTest));
 
         // Check that length + status was transmitted in the right order
-        Verify(Method(USART_mock,write_char).Using(ONCHIP_OUTPUT_HEADER_SIZE) + \
-               Method(USART_mock,write_char).Using(((onChip_out *)outBuf)->status)).Exactly(1);
+        Verify(Method(USART_mock,write_char).Using(CLI_OUTPUT_HEADER_SIZE) + \
+               Method(USART_mock,write_char).Using(((cli_out *)outBuf)->status)).Exactly(1);
     }
 
     SECTION("Error - Wrong header received")
@@ -412,20 +412,20 @@ TEST_CASE( "Test onChip_transceive")
         Fake(Method(Commands_mock, CmdTest));
 
         // Test complete receive + decode + transmit
-        status = onChip_transceive(inBuf, outBuf);
+        status = cli_transceive(inBuf, outBuf);
 
         // Check that return status is error
-        REQUIRE(                        status == ONCHIP_STATUS_ERROR_WRONG_HEADER);
-        REQUIRE(((onChip_out *)outBuf)->status == ONCHIP_STATUS_ERROR_WRONG_HEADER);
+        REQUIRE(                        status == CLI_STATUS_ERROR_WRONG_HEADER);
+        REQUIRE(((cli_out *)outBuf)->status == CLI_STATUS_ERROR_WRONG_HEADER);
 
         // Check response length is 0
-        REQUIRE(((onChip_out *)outBuf)->response.length == 0);
+        REQUIRE(((cli_out *)outBuf)->response.length == 0);
 
         // Check that no "Test<ID>" was called
         VerifyNoOtherInvocations(Method(Commands_mock, CmdTest));
 
         // Check that length + status was transmitted in the right order
-        Verify(Method(USART_mock,write_char).Using(ONCHIP_OUTPUT_HEADER_SIZE) + \
-               Method(USART_mock,write_char).Using(((onChip_out *)outBuf)->status)).Exactly(1);
+        Verify(Method(USART_mock,write_char).Using(CLI_OUTPUT_HEADER_SIZE) + \
+               Method(USART_mock,write_char).Using(((cli_out *)outBuf)->status)).Exactly(1);
     }
 }

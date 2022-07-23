@@ -1,24 +1,23 @@
-#include "onChip.h"
-#include "onChip_Cmd.h"
+#include "embcli.h"
 
-static void (*onChip_read_char)(uint8_t *data);
-static void (*onChip_write_char)(uint8_t data);
+static void (*cli_read_char)(uint8_t *data);
+static void (*cli_write_char)(uint8_t data);
 
-onChip_Status onChip_init(onChip_Cfg *pCfg)
+cli_status cli_init(cli_cfg *pCfg)
 {
     if ((pCfg->pSerialRxChar_func == NULL) || 
         (pCfg->pSerialTxChar_func == NULL))
     {
-        return ONCHIP_STATUS_FAIL;
+        return CLI_STATUS_FAIL;
     }
     
-    onChip_read_char  = pCfg->pSerialRxChar_func;
-    onChip_write_char = pCfg->pSerialTxChar_func;
+    cli_read_char  = pCfg->pSerialRxChar_func;
+    cli_write_char = pCfg->pSerialTxChar_func;
 
-    return ONCHIP_STATUS_SUCCESS;
+    return CLI_STATUS_SUCCESS;
 }
 
-onChip_Status onChip_receive_cmd(uint8_t *pInBuf)
+cli_status cli_receive_cmd(uint8_t *pInBuf)
 {
     uint8_t data;
     uint8_t counter = 0;
@@ -28,7 +27,7 @@ onChip_Status onChip_receive_cmd(uint8_t *pInBuf)
     do
     {
         // Read new data (blocking)
-        onChip_read_char(&data);
+        cli_read_char(&data);
 
         // Read first byte as length
         if (!length_received)
@@ -44,34 +43,34 @@ onChip_Status onChip_receive_cmd(uint8_t *pInBuf)
     } while (counter < length);
 
     // Sanity check on number of received bytes
-    if (counter < ONCHIP_INPUT_HEADER_SIZE)
+    if (counter < CLI_INPUT_HEADER_SIZE)
     {
-        return ONCHIP_STATUS_ERROR_WRONG_HEADER;
+        return CLI_STATUS_ERROR_WRONG_HEADER;
     }
 
-    return ONCHIP_STATUS_SUCCESS;
+    return CLI_STATUS_SUCCESS;
 }
 
-void onChip_transmit_rsp(onChip_out *pOutString)
+void cli_transmit_rsp(cli_out *pOutString)
 {
     uint8_t length = pOutString->response.length;
     uint8_t *buf = pOutString->response.data;
-    onChip_Status status = pOutString->status;
+    cli_status status = pOutString->status;
    
     // Write length = (response data length + status field + length field)
-    onChip_write_char(ONCHIP_OUTPUT_HEADER_SIZE + length);
+    cli_write_char(CLI_OUTPUT_HEADER_SIZE + length);
 
     // Write status
-    onChip_write_char((uint8_t)status);
+    cli_write_char((uint8_t)status);
 
     // Write data payload
     for(uint8_t i=0; i< length; i++)
     {
-        onChip_write_char(buf[i]);
+        cli_write_char(buf[i]);
     }
 }
 
-onChip_Status onChip_command_handler(onChip_in *pInString, onChip_out *pOutString)
+cli_status cli_command_handler(cli_in *pInString, cli_out *pOutString)
 {
     uint8_t cmdFound = 0;
     
@@ -97,36 +96,36 @@ onChip_Status onChip_command_handler(onChip_in *pInString, onChip_out *pOutStrin
     // Check if command exist
     if (!cmdFound)
     {
-        pOutString->status = ONCHIP_STATUS_ERROR_CMD_NOT_EXIST;
+        pOutString->status = CLI_STATUS_ERROR_CMD_NOT_EXIST;
         pOutString->response.length = 0;
 
-        return ONCHIP_STATUS_ERROR_CMD_NOT_EXIST;
+        return CLI_STATUS_ERROR_CMD_NOT_EXIST;
     }
 
-    return ONCHIP_STATUS_SUCCESS;
+    return CLI_STATUS_SUCCESS;
 }
 
-onChip_Status onChip_transceive(uint8_t *pInBuf, uint8_t *pOutBuf)
+cli_status cli_transceive(uint8_t *pInBuf, uint8_t *pOutBuf)
 {
-    onChip_Status status;
+    cli_status status;
 
     // Listen for new command
-    status = onChip_receive_cmd(pInBuf);
+    status = cli_receive_cmd(pInBuf);
 
     // Decode and execute
-    if (status == ONCHIP_STATUS_SUCCESS)
+    if (status == CLI_STATUS_SUCCESS)
     {
-        status = onChip_command_handler((onChip_in *)pInBuf, (onChip_out *)pOutBuf);
+        status = cli_command_handler((cli_in *)pInBuf, (cli_out *)pOutBuf);
     }
     else
     {
         // In case of error format response
-        ((onChip_out *)pOutBuf)->status = status;
-        ((onChip_out *)pOutBuf)->response.length = 0;
+        ((cli_out *)pOutBuf)->status = status;
+        ((cli_out *)pOutBuf)->response.length = 0;
     }
 
     // Send response
-    onChip_transmit_rsp(((onChip_out *)pOutBuf));
+    cli_transmit_rsp(((cli_out *)pOutBuf));
 
     return status;
 }

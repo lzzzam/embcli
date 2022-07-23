@@ -1,29 +1,48 @@
 #include "STM32F303RE.h"
 #include "system.h"
-#include "onChip.h"
+#include "embcli.h"
 
-void USART3_write_char(uint8_t data);
-void USART3_read_char(uint8_t *data);
+cli_status  Test(uint8_t *pInBuf, cli_rsp *pOutRsp);
 
-USART_handle USART3_handle;
-onChip_Cfg SerialCfg = {&USART3_write_char, &USART3_read_char};
-uint8_t	inBuf[100];
-uint8_t outBuf[100];
+cli_cmd_vector  CmdTable[10] = \
+{
+    //Group     Id      Function
+    { 0x00,     0x00,   Test   },
+    { 0x00,     0x01,   Test   },
+    { 0x00,     0x02,   Test   },
+    { 0x00,     0x03,   Test   },
+    { 0x00,     0x04,   Test   },
+    { 0x00,     0x05,   Test   },
+    { 0x00,     0x06,   Test   },
+    { 0x00,     0x07,   Test   },
+    { 0x00,     0x08,   Test   },
+    { 0x00,     0x09,   Test   }
+};
 
 int main(void)
 {	
-	while(1)
+	uint8_t	inBuf[100];
+    uint8_t outBuf[100];
+
+    while(1)
 	{
 		// Listen till new command is received
-		onChip_Status status = onChip_transceive(inBuf, outBuf);;
+		cli_status status = cli_transceive(inBuf, outBuf);;
 	}
 }
 
+void            USART3_write_char(uint8_t data);
+void            USART3_read_char(uint8_t *data);
+
+USART_handle    USART3_handle;
+cli_cfg         SerialCfg = {&USART3_write_char, &USART3_read_char};
+
+
 /* 
  * Wrapper to adapt __USART_write_char interface in order
- * to be properly used by the onChip module. 
+ * to be properly used by the cli module. 
  * This function is linked to the main read function pointer 
- * during onChip_init, see @ref onChip_write_char() 
+ * during cli_init, see @ref cli_write_char() 
  */
 void USART3_write_char(uint8_t data)
 {
@@ -32,9 +51,9 @@ void USART3_write_char(uint8_t data)
 
 /* 
  * Wrapper to adapt __USART_read_char interface in order
- * to be properly used by the onChip module. 
+ * to be properly used by the cli module. 
  * This function is linked to the main read function pointer 
- * during onChip_init, see @ref onChip_read_char() 
+ * during cli_init, see @ref cli_read_char() 
  */
 void USART3_read_char(uint8_t *data)
 {
@@ -44,9 +63,9 @@ void USART3_read_char(uint8_t *data)
 
 void systemInit(void)
 {	
-    // Initialize onChip module with the Serial 
+    // Initialize cli module with the Serial 
 	// read\write functions to be used
-	onChip_init(&SerialCfg);
+	cli_init(&SerialCfg);
 	
 	// Enable GPIO Port B - Peripheral clock
     __GPIO_EnPCLK(GPIOB);
@@ -69,4 +88,17 @@ void systemInit(void)
 
     // Initialize USART3
     __USART_init(&USART3_handle);
+}
+
+
+cli_status Test(uint8_t *pInBuf, cli_rsp *pOutRsp)
+{
+    pOutRsp->length = pInBuf[0];
+
+    for (uint8_t i=0; i<pOutRsp->length; i++)
+    {
+        pOutRsp->data[i] = pInBuf[i];
+    }
+
+    return CLI_STATUS_SUCCESS;
 }

@@ -28,14 +28,13 @@ BUILD_DIR = ./bin
 
 # Include paths
 INC = \
-./onChip \
+./inc \
 ./test/demo/device/inc
 
 # Source files to compile
 SRC += \
 $(STARTUP) \
-onChip/onChip.c \
-onChip/onChip_Cmd.c \
+src/embcli.c \
 test/demo/device/system.c \
 test/demo/device/RCC.c \
 test/demo/device/GPIO.c \
@@ -62,7 +61,7 @@ $(BUILD_DIR)/%.o: %.c
 
 $(BUILD_DIR):
 	@echo 'Creating build directories'
-	@mkdir -p $(BUILD_DIR)/onChip
+	@mkdir -p $(BUILD_DIR)/src
 	@mkdir -p $(BUILD_DIR)/test
 	@mkdir -p $(BUILD_DIR)/test/demo
 	@mkdir -p $(BUILD_DIR)/test/demo/device

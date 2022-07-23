@@ -92,7 +92,7 @@ void sendMsg(int sock, void* msg, uint32_t msgsize)
 }
 
 
-TEST_CASE( "onChip Terminal Simulation") 
+TEST_CASE( "cli Terminal Simulation") 
 {
     
     bzero(buff, BUFFSIZE);
