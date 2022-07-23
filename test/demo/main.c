@@ -4,7 +4,7 @@
 
 cli_status  Test(uint8_t *pInBuf, cli_rsp *pOutRsp);
 
-cli_cmd_vector  CmdTable[10] = \
+cli_cmd_vector  cliCmdTable[10] = \
 {
     //Group     Id      Function
     { 0x00,     0x00,   Test   },
@@ -60,10 +60,13 @@ void USART3_read_char(uint8_t *data)
 	__USART_read_char(&USART3_handle, data);
 }
 
-
+/*
+ * Overload callback to initialize the hardware and embcli
+ * module during Startup, this function is called during Reset_Handler.
+ */
 void systemInit(void)
 {	
-    // Initialize cli module with the Serial 
+    // Initialize embcli module with the Serial 
 	// read\write functions to be used
 	cli_init(&SerialCfg);
 	
@@ -91,6 +94,13 @@ void systemInit(void)
 }
 
 
+/**
+ * @brief Test function to be called from CLI loop
+ * 
+ * @param pInBuf input data buffer to receive data from host
+ * @param pOutRsp output struct to send response data to host
+ * @return cli_status 
+ */
 cli_status Test(uint8_t *pInBuf, cli_rsp *pOutRsp)
 {
     pOutRsp->length = pInBuf[0];

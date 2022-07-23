@@ -3,6 +3,7 @@
 #include "USART_fake.hpp"
 #include "Commands_fake.hpp"
 #include "embcli.h"
+#include "embcli_comm.h"
 
 TEST_CASE("Test cli_init") 
 {
@@ -182,9 +183,9 @@ TEST_CASE( "Test cli_command_handler")
 
     cli_init(&cfg);
 
-    SECTION("Call all entries in the CmdTable")
+    SECTION("Call all entries in the cliCmdTable")
     {
-        /* Test all commands in the CmdTable 
+        /* Test all commands in the cliCmdTable 
          * with various input length */
         auto ID     = GENERATE(0,1,2,3,4,5,6,7,8,9);
         auto LENGTH = GENERATE(take(10, random(0,99)));
@@ -239,7 +240,7 @@ TEST_CASE( "Test cli_command_handler")
     SECTION("Check command not found")
     {
         /* Generate Group\Id pairs that 
-         * are NOT present in the CmdTable */
+         * are NOT present in the cliCmdTable */
         auto GROUP  = GENERATE(1,2,3,4,5,6,7,8,9);
         auto ID     = GENERATE(0,1,2,3,4,5,6,7,8,9);
 
@@ -278,9 +279,9 @@ TEST_CASE( "Test cli_transceive")
     cfg = {USART_write_char, USART_read_char};
     cli_init(&cfg);
 
-    SECTION("Call all entries in the CmdTable")
+    SECTION("Call all entries in the cliCmdTable")
     {
-        // Test all command in the CmdTable
+        // Test all command in the cliCmdTable
         uint8_t GROUP = 0x00;
         auto    ID    = GENERATE(0,1,2,3,4,5,6,7,8,9);
         
@@ -318,7 +319,7 @@ TEST_CASE( "Test cli_transceive")
 
     SECTION("Copy input string data to output response")
     {
-        // Test all command in the CmdTable
+        // Test all command in the cliCmdTable
         uint8_t GROUP = 0x00;
         auto    ID    = GENERATE(0,1,2,3,4,5,6,7,8,9);
 
@@ -372,7 +373,7 @@ TEST_CASE( "Test cli_transceive")
 
     SECTION("Error - Command not exist")
     {
-        // Test all command in the CmdTable
+        // Test all command in the cliCmdTable
         uint8_t GROUP = 0x01;
         auto    ID    = GENERATE(0,1,2,3,4,5,6,7,8,9);
 
@@ -403,7 +404,7 @@ TEST_CASE( "Test cli_transceive")
 
     SECTION("Error - Wrong header received")
     {
-        // Test all command in the CmdTable
+        // Test all command in the cliCmdTable
         uint8_t GROUP = GENERATE(0,1,2,3,4,5,6,7,8,9);
         uint8_t len   = GENERATE(0,1,2);
         

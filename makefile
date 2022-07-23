@@ -73,15 +73,15 @@ clean:
 	rm -r $(BUILD_DIR)
 
 .PHONY: size
-size: $(OUTPUT).hex
-	$(SIZE) $(OUTPUT).hex
+size: $(OUTPUT).elf
+	$(SIZE) $^
 
 .PHONY: symbol
-symbol: $(OUTPUT).hex
+symbol: $(OUTPUT).elf
 	$(READELF) -s $^
 
 .PHONY: sections
-sections: $(OUTPUT).hex
+sections: $(OUTPUT).elf
 	$(READELF) -S $^
 
 .PHONY: foo

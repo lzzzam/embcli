@@ -1,6 +1,6 @@
 #include "Commands_fake.hpp"
 
-cli_cmd_vector CmdTable[10] = \
+cli_cmd_vector cliCmdTable[10] = \
 {
     //Group     Id      Function
     { 0x00,     0x00,   Test0   },

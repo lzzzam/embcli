@@ -1,18 +1,19 @@
 #include "embcli.h"
+#include "embcli_comm.h"
 
-static void (*cli_read_char)(uint8_t *data);
-static void (*cli_write_char)(uint8_t data);
+static void         (*cli_read_char)(uint8_t *data);
+static void         (*cli_write_char)(uint8_t data);
 
 cli_status cli_init(cli_cfg *pCfg)
 {
-    if ((pCfg->pSerialRxChar_func == NULL) || 
-        (pCfg->pSerialTxChar_func == NULL))
+    if ((pCfg->pReadChar == NULL) || 
+        (pCfg->pWriteChar == NULL))
     {
         return CLI_STATUS_FAIL;
     }
     
-    cli_read_char  = pCfg->pSerialRxChar_func;
-    cli_write_char = pCfg->pSerialTxChar_func;
+    cli_read_char  = pCfg->pReadChar;
+    cli_write_char = pCfg->pWriteChar;
 
     return CLI_STATUS_SUCCESS;
 }
@@ -78,12 +79,12 @@ cli_status cli_command_handler(cli_in *pInString, cli_out *pOutString)
     uint8_t group = pInString->command.group;
     uint8_t id    = pInString->command.id;
 
-    for (uint8_t i=0; i<10; i++)
+    for (uint8_t i=0; i<CLI_CMD_TABLE_SIZE; i++)
     {
-        if ((group == CmdTable[i].group) && (id == CmdTable[i].id))
+        if ((group == cliCmdTable[i].group) && (id == cliCmdTable[i].id))
         {
             // Call command and pass input data and output struct
-            pOutString->status = CmdTable[i].func(pInString->command.data, 
+            pOutString->status = cliCmdTable[i].func(pInString->command.data, 
                                                   &(pOutString->response));
 
             // Updated flag
