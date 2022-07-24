@@ -21,4 +21,4 @@ UNITTEST_INC = $(foreach dir, $(UNITTEST_INC_DIR),-I$(realpath $(dir)))
 # gcc -std=c++11 test.cpp -o test -lstdc++
 # g++ -std=c++11 OnChip_UnitTest.cpp mocks/USART_fake.cpp ../onChip/onChip.c -I. -I../onChip -I./catch -I./fakeit -I./header_override -I./mocks -o ./bin/test/unittest/OnChip_UnitTest
 unittest: 
-	g++ -O0 -std=c++11 -g -D"UNIT_TEST" $(UNITTEST_SRC) $(UNITTEST_INC) -o $(BUILD_DIR)/test/unittest/embcli_unittest -lstdc++
+	g++ -O0 -std=c++11 -g -D"UNIT_TEST" $(UNITTEST_SRC) $(UNITTEST_INC) -o $(BUILD_DIR)/test/unittest/embcli_unittest.exe -lstdc++
