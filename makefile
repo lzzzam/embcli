@@ -108,6 +108,12 @@ disassembly: $(OUTPUT).elf
 	@echo 'Invoking: arm-none-eabi-objdump'
 	$(OBJDUMP) -d -S $(OUTPUT).elf > $(OUTPUT).s
 
+.PHONY: setup
+setup:
+	@echo 'Setup python environment'
+	@echo 'Invoking: pip'
+	pip install -r requirements.txt
+
 .PHONY: foo
 foo: $(OBJS)
 	@echo $^
