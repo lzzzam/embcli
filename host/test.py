@@ -1,18 +1,6 @@
 import serial
 import cstruct
-
-cstruct.define("BUF_SIZE", 20)
-
-class onChip_Payload(cstruct.MemCStruct):
-    __byte_order__ = cstruct.LITTLE_ENDIAN
-    __def__ = """
-        struct {
-            uint8_t data[BUF_SIZE];
-        }
-    """
-
-
-    
+from protocol import Command, CommandFrame, ResponseFrame
 
 class Position(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
@@ -22,14 +10,34 @@ class Position(cstruct.MemCStruct):
             uint8_t pos_y;
         }
     """
+    
+# Serial interface object
+s = None
+
+def initSerial(port, baudrate):
+    s = serial.Serial(port, baudrate)  
+  
+def sendCommand(cmd):
+    frame = CommandFrame(cmd=cmd)
+    s.write(frame.pack())
+    
+def receiveResponse():
+    buf = b''
+    # Read frame length as first byte
+    buf += s.read(1)
+    # Read remaining part of the frame
+    buf += s.read(buf[0]-1)
+    
+    return ResponseFrame(buf)
+
 
 pos  = Position(pos_x=14, pos_y=15)
-pos2 = Position(pos_x=255, pos_y=255)
-cmd  = onChip_Cmd(group=0, id=1, data=pos)
-# str  = onChip_in()
-
-#cmd.data = pos2
+cmd  = Command(group=0, id=1, data=pos)
+rsp  = ResponseFrame(b'\x04\x00\xAA\xBB')
+posResp = Position(rsp.data)
 
 print(cmd)
-print(cmd.size)
 print(cmd.pack())
+
+print(rsp)
+print(posResp)
