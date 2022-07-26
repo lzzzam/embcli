@@ -1,3 +1,4 @@
+from xxlimited import Str
 import cstruct
 
 # Payloads cmd/rsp buffer size
@@ -11,6 +12,10 @@ CLI_COMMAND_HEADER_SIZE  = 3    # length + group + id
 CLI_RESPONSE_HEADER_SIZE = 2    # length + status
 
 # CLI status return macros
+CLI_STATUS_SUCCESS              = 0
+CLI_STATUS_FAIL                 = 1
+CLI_STATUS_ERROR_WRONG_HEADER   = 2
+CLI_STATUS_ERROR_CMD_NOT_EXIST  = 3
 cstruct.typedef("uint8_t", "cli_status")
 cstruct.define("CLI_STATUS_SUCCESS",            0)
 cstruct.define("CLI_STATUS_FAIL",               1)
@@ -131,6 +136,37 @@ class Response(cstruct.CStruct):
 #             uint32_t value;
 #         }
 #     """    
+    
+# class Buf(cstruct.MemCStruct):
+#     __byte_order__ = cstruct.BIG_ENDIAN
+#     __def__ = f"""
+#         struct {{
+#             uint8_t length;
+#             uint8_t _data[{CMD_BUF_SIZE-1}];
+#         }}
+#     """
+#     @property
+#     def data(self):
+#         return self._data
+    
+#     @data.setter
+#     def data(self, value):
+#         # Reset data buffer before overwriting with new data
+#         for i in range(0, CMD_BUF_SIZE-1):
+#             if i < len(value):
+#                 self._data[i] = value[i]
+#             else:
+#                 self._data[i] = 0
+    
+#     """ Override cstruct __str__ definition
+#     """
+#     def __str__ (self):
+#         str = '['
+#         for i in range(0, self.length-1):
+#             str += f'{self._data[i]}, '
+#         str += f'{self._data[self.length]}]'
+        
+#         return f'Buf(length={self.length}, data={str})'
 
 # MPU_reg = SFR(address=0x01020304, mask=0x05060708, value=0x090A0B0C)
 # Cmd     = Command(group=14, id=15, data=MPU_reg)
@@ -139,7 +175,12 @@ class Response(cstruct.CStruct):
 # print(Cmd.data)
 # print(Cmd.pack())
 
-# Rsp     = Response(b'\x03\x00\x01\x02\x03\x04\x01\x02\x03\x04\x01\x02\x03\x04\x01\x02\x03\x04')
+# Rsp     = Response(b'\x00\x00\x03\x00\x00\x02')
 # print(Rsp)
+# print(Rsp.length)
+# print(Rsp.status)
 # print(Rsp.data)
-# print(SFR(Rsp.data))
+
+# rcv = Buf()
+# rcv.data = b'\x04\xAA\xBB\xCC\xDD'
+# print(rcv)
