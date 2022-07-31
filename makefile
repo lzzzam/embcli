@@ -16,16 +16,16 @@ CFLAGS += -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunctio
 CFLAGS += $(foreach file,$(INC),-I"$(file)")
 
 # Linker options
-LFLAGS = -L"./test/demo/ldscript" -T mem.ld -nostartfiles -Xlinker --gc-sections -Wl,-Map=$(OUTPUT).map
+LFLAGS = -L"./test/systest/onChip/ldscript" -T mem.ld -nostartfiles -Xlinker --gc-sections -Wl,-Map=$(OUTPUT).map
 
 # Link Time Optimization plugin used for library generation
 PLUGIN    = $(ROOT)/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/10.2.1/liblto_plugin.0.so
 
 # Define here your main target
-TARGET  = test/demo/main.c
+TARGET  = test/systest/onChip/main.c
 
 # Startup file to boot-up system
-STARTUP = test/demo/device/startup.c
+STARTUP = test/systest/onChip/device/startup.c
 
 # Main output directory
 BUILD_DIR = ./bin
@@ -33,7 +33,7 @@ BUILD_DIR = ./bin
 # Include paths
 INC = \
 ./inc \
-./test/demo/device/inc
+./test/systest/onChip/device/inc
 
 # Output Library name
 LIB 	  = embcli
@@ -45,11 +45,11 @@ src/embcli.c
 # Source files to compile for the demo
 DEMO_SRC += \
 $(STARTUP) \
-test/demo/main.c \
-test/demo/device/system.c \
-test/demo/device/RCC.c \
-test/demo/device/GPIO.c \
-test/demo/device/USART.c 
+test/systest/onChip/main.c \
+test/systest/onChip/device/system.c \
+test/systest/onChip/device/RCC.c \
+test/systest/onChip/device/GPIO.c \
+test/systest/onChip/device/USART.c 
 
 
 OUTPUT    = $(foreach file, $(TARGET),$(BUILD_DIR)/$(file:%.c=%))
@@ -81,8 +81,9 @@ $(BUILD_DIR):
 	@echo 'Creating build directories'
 	@mkdir -p $(BUILD_DIR)/src
 	@mkdir -p $(BUILD_DIR)/test
-	@mkdir -p $(BUILD_DIR)/test/demo
-	@mkdir -p $(BUILD_DIR)/test/demo/device
+	@mkdir -p $(BUILD_DIR)/test/systest
+	@mkdir -p $(BUILD_DIR)/test/systest/onChip
+	@mkdir -p $(BUILD_DIR)/test/systest/onChip/device
 	@mkdir -p $(BUILD_DIR)/test/unittest
 	@echo '$(BUILD_DIR) created'
 
