@@ -116,6 +116,12 @@ setup:
 	@echo 'Invoking: pip'
 	pip install -r requirements.txt
 
+openocd:
+	openocd -f interface/jlink.cfg -c "transport select swd" -f target/stm32f3x.cfg
+
+debug:
+	arm-none-eabi-gdb $(OUTPUT).elf -ex "target remote tcp::3333"
+
 .PHONY: foo
 foo: $(OBJS)
 	@echo $^
