@@ -1,12 +1,14 @@
 .SECONDARY:
-ROOT   = /Users/luca/Documents/GitHub/Embedded-Software/Toolchain/Compilers
-CC_DIR = $(ROOT)/gcc-arm-none-eabi/bin
+ROOT   = /Users/luca/Documents/GitHub/Embedded-Software/Tools
+CC_DIR = $(ROOT)/gcc-arm-none-eabi-10.3-2021.10/bin
 CC     = $(CC_DIR)/arm-none-eabi-gcc
+GDB    = $(CC_DIR)/arm-none-eabi-gdb
 AR     = $(CC_DIR)/arm-none-eabi-ar
 SIZE   = $(CC_DIR)/arm-none-eabi-size
 OBJCOPY = $(CC_DIR)/arm-none-eabi-objcopy
 OBJDUMP = $(CC_DIR)/arm-none-eabi-objdump
 READELF = $(CC_DIR)/arm-none-eabi-readelf
+QEMU	= $(ROOT)/xpack-qemu-arm-7.0.0-1/bin/qemu-system-gnuarmeclipse
 
 CFLAGS += -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -flto \
 		  -Wunused -Wuninitialized -Wall -Wextra -Wmissing-declarations -Wconversion -Wpointer-arith -Wshadow -Wlogical-op \
@@ -19,7 +21,7 @@ CFLAGS += $(foreach file,$(INC),-I"$(file)")
 LFLAGS = -L"./test/demo/ldscript" -T mem.ld -nostartfiles -Xlinker --gc-sections -Wl,-Map=$(OUTPUT).map
 
 # Link Time Optimization plugin used for library generation
-PLUGIN    = $(ROOT)/gcc-arm-none-eabi/lib/gcc/arm-none-eabi/10.2.1/liblto_plugin.0.so
+PLUGIN    = $(ROOT)/gcc-arm-none-eabi-10.3-2021.10/lib/gcc/arm-none-eabi/10.3.1/liblto_plugin.0.so
 
 # Define here your main target
 TARGET  = test/demo/main.c
