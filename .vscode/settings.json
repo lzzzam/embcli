@@ -5,10 +5,13 @@
         }
     ],
     "testMate.cpp.log.logpanel": true,
-    "files.associations": {
-        "bitset": "cpp",
-        "type_traits": "cpp",
-        "stm32f303re.h": "c",
-        "stdio.h": "c"
-    }
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./test/systest/offChip/",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }
