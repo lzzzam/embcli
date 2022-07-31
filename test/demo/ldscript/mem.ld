@@ -42,6 +42,8 @@ SECTIONS
 	.text :
 	{
 		*(.text*)
+		KEEP(*(.init))
+		KEEP(*(.fini))
 		*(.rodata*)
 	} > FLASH
 
@@ -104,6 +106,15 @@ SECTIONS
 		*(.bss*)
 		. = ALIGN(4);
 		__bss_end__ = .;
+	} > RAM
+
+	.heap (COPY):
+	{
+		__end__ = .;
+		__HeapStart = .;
+		PROVIDE(end = .);
+		*(.heap*)
+		__HeapLimit = .;
 	} > RAM
 
 	/* Stack */

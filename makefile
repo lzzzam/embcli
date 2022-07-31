@@ -120,3 +120,4 @@ foo: $(OBJS)
 	@echo $@
 
 include test/unittest/makefile_ut.mk
+include test/qemu/makefile_qemu.mk
