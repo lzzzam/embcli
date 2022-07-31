@@ -84,6 +84,7 @@ $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)/test/demo
 	@mkdir -p $(BUILD_DIR)/test/demo/device
 	@mkdir -p $(BUILD_DIR)/test/unittest
+	@mkdir -p $(BUILD_DIR)/test/host
 	@echo '$(BUILD_DIR) created'
 
 .PHONY: clean
@@ -120,3 +121,4 @@ foo: $(OBJS)
 	@echo $@
 
 include test/unittest/makefile_ut.mk
+include test/host/makefile_sim.mk
