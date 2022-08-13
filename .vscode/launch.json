@@ -5,7 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "launch",
+            "cwd": "${workspaceFolder}",
+            "executable": "./bin/test/systest/onChip/main.elf",
+            "name": "Debug",
+            "request": "launch",
+            "type": "cortex-debug",
+            "device": "STM32F303RE",
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "none",
+            "servertype": "jlink"
+        },
+        {
+            "name": "Unit Test",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/STM32F303RE/src/bin/test/unittest/OnChip_UnitTest",
