@@ -1,6 +1,5 @@
-from xml.etree.ElementInclude import DEFAULT_MAX_INCLUSION_DEPTH
 import cstruct
-import format
+from . import format
 
 class Reg(cstruct.MemCStruct):
     __byte_order__ = cstruct.BIG_ENDIAN
@@ -11,3 +10,11 @@ class Reg(cstruct.MemCStruct):
         }
     """
 
+class Buffer(cstruct.MemCStruct):
+    __byte_order__ = cstruct.LITTLE_ENDIAN
+    __def__ = """
+        struct {
+            uint8_t length;
+            uint8_t data[4];
+        }
+    """

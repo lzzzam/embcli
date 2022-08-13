@@ -1,21 +1,33 @@
-from distutils.log import error
-import format
+from . import format
 import serial
 
 # Serial interface object
 s = None
 
 def initSerial(port, baudrate):
-    s = serial.Serial(port, baudrate)  
+    global s
+    s = serial.Serial(port, baudrate)
+    
+def closeSerial():
+    global s
+    s.close()
+    
+def sendCommand(cmd):
+    global s
+    s.write(cmd.serialize())
+    
+def receiveResponse():
+    global s
+    
+    buf = b''
+    # Read frame length as first byte
+    buf += s.read(1)
+    # Read remaining part of the frame
+    buf += s.read(buf[0]-1)
+    
+    return format.Response(buf)
 
 def executeCommand(cmd):
-    s.write(cmd.pack())
-    data = s.read(format.RSP_BUF_SIZE)
-    rsp = format.Response(data)
-    
-    try:
-        assert(rsp.status == format.CLI_STATUS_SUCCESS)
-    except:
-        error
-        
+    sendCommand(cmd)
+    rsp = receiveResponse()
     return rsp

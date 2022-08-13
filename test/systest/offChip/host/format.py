@@ -1,4 +1,3 @@
-from xxlimited import Str
 import cstruct
 
 # Payloads cmd/rsp buffer size
@@ -71,6 +70,10 @@ class Command(cstruct.MemCStruct):
         # Copy input to "_data" buffer and update "length"
         self.memcpy(CLI_COMMAND_HEADER_SIZE, value.__mem__, value.size)
         self.length = CLI_COMMAND_HEADER_SIZE + value.size
+        
+    def serialize(self):
+        frame = self.pack()
+        return frame[0:self.length]
 
 
 class Response(cstruct.CStruct):
