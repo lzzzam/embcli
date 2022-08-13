@@ -1,1 +1,0 @@
-# I am here to make the test_*.py be recognized from the Visual Studio Code Testing extension
