@@ -16,6 +16,17 @@
             "servertype": "jlink"
         },
         {
+            "cwd": "${workspaceFolder}",
+            "executable": "./bin/test/systest/onChip/main.elf",
+            "name": "Attach",
+            "request": "attach",
+            "type": "cortex-debug",
+            "device": "STM32F303RE",
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "none",
+            "servertype": "jlink"
+        },
+        {
             "name": "Unit Test",
             "type": "cppdbg",
             "request": "launch",
