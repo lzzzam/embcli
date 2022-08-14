@@ -139,7 +139,7 @@ cli_status Echo(uint8_t *pInBuf, cli_rsp *pOutRsp)
     // Copy payload to output buffer.payload
     memcpy(outBuf->data, inBuf->data, inBuf->length);
 
-    pOutRsp->length = sizeof(TestBuffer);
+    pOutRsp->length = sizeof(outBuf->length) + outBuf->length;
 
     return CLI_STATUS_SUCCESS;
 }
@@ -153,7 +153,7 @@ cli_status Echo(uint8_t *pInBuf, cli_rsp *pOutRsp)
  */
 cli_status Led_ON(uint8_t *pInBuf, cli_rsp *pOutRsp)
 {
-    pOutRsp->length = pInBuf[0];
+    pOutRsp->length = 0;
 
     // Drive GPIO PA5 High
     __GPIO_writePin(GPIOA, 5, TRUE);

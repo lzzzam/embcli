@@ -1,5 +1,5 @@
 import cstruct
-from . import format
+from . import protocol
 
 class Reg(cstruct.MemCStruct):
     __byte_order__ = cstruct.BIG_ENDIAN
@@ -18,3 +18,6 @@ class Buffer(cstruct.MemCStruct):
             uint8_t data[4];
         }
     """
+    
+    def __eq__(self, other):
+        return (self.length, self.data) == (other.length, other.data)

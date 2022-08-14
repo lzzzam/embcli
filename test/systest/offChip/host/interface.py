@@ -1,19 +1,24 @@
-from . import format
 import serial
+import logging
+from . import protocol
+from . import report
 
 # Serial interface object
 s = None
 
 def initSerial(port, baudrate):
     global s
+    logging.info(f"Initializa serial PORT={port}, BAUDRATE={baudrate}")
     s = serial.Serial(port, baudrate)
     
 def closeSerial():
     global s
+    logging.info(f"Closing serial communication")
     s.close()
     
 def sendCommand(cmd):
     global s
+    report.logCommand(cmd)
     s.write(cmd.serialize())
     
 def receiveResponse():
@@ -25,9 +30,12 @@ def receiveResponse():
     # Read remaining part of the frame
     buf += s.read(buf[0]-1)
     
-    return format.Response(buf)
+    report.logResponse(buf)
+    return protocol.Response(buf)
 
 def executeCommand(cmd):
+    logging.info(f"{cmd}")
     sendCommand(cmd)
     rsp = receiveResponse()
+    logging.info(f"{rsp}")
     return rsp
