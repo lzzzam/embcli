@@ -16,7 +16,7 @@ class Test_Library(unittest.TestCase):
     
     # Executed once at beginning of all tests
     def setUpClass():
-        initLog("./log/report.log")
+        initLog("./log/test_embcli.log")
         try:
             initSerial(SERIAL_PORT, 9600)
         except:

@@ -11,7 +11,7 @@ def initLog(path):
         os.mkdir(dir)
     
     # Setup root logger
-    logging.basicConfig(filename=f'{dir}/report.log', 
+    logging.basicConfig(filename=path, 
                         format='[%(levelname)s]:\t\t%(message)s', 
                         filemode='w', 
                         level=logging.INFO)
