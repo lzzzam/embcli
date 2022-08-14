@@ -21,6 +21,15 @@ cstruct.define("CLI_STATUS_FAIL",               1)
 cstruct.define("CLI_STATUS_ERROR_WRONG_HEADER", 2)
 cstruct.define("CLI_STATUS_ERROR_CMD_NOT_EXIST",3)
 
+# Define dictionary
+CLI_STATUS = \
+{
+    CLI_STATUS_SUCCESS              :   "SUCCESS",
+    CLI_STATUS_FAIL                 :   "FAIL",
+    CLI_STATUS_ERROR_WRONG_HEADER   :   "ERROR_WRONG_HEADER",
+    CLI_STATUS_ERROR_CMD_NOT_EXIST  :   "ERROR_CMD_NOT_EXIST"
+}
+
 class Command(cstruct.MemCStruct):
     __byte_order__ = cstruct.LITTLE_ENDIAN
     __def__ = """
@@ -74,6 +83,28 @@ class Command(cstruct.MemCStruct):
     def serialize(self):
         frame = self.pack()
         return frame[0:self.length]
+    
+    """
+    Overlaod __str__ method from cstruct
+    """
+    def __str__(self):
+        
+        string = f"Command(length={self.length}, group={self.group}, id={self.id}, data="
+        string += "["
+        
+        # represent data payload
+        if self.length > CLI_COMMAND_HEADER_SIZE:
+            
+            dataLen = self.length - CLI_COMMAND_HEADER_SIZE
+            
+            # append data bytes
+            for i in range(0, dataLen - 1):
+                string += f"{hex(self.data[i])}, "
+            # append last byte
+            string += f"{hex(self.data[i])}"
+            
+        string += "])"
+        return string
 
 
 class Response(cstruct.CStruct):
@@ -122,6 +153,29 @@ class Response(cstruct.CStruct):
     @property
     def data(self):
         return bytes(self._data)
+
+    """
+    Overlaod __str__ method from cstruct
+    """
+    def __str__(self):
+        
+        string = f"Response(length={self.length}, status={CLI_STATUS[self.status]}, data="
+        string += "["
+        
+        # represent data payload
+        if self.length > CLI_COMMAND_HEADER_SIZE:
+            
+            dataLen = self.length - CLI_COMMAND_HEADER_SIZE
+            
+            # append data bytes
+            for i in range(0, dataLen - 1):
+                string += f"{hex(self.data[i])}, "
+            # append last byte
+            string += f"{hex(self.data[i])}"
+            
+        string += "])"
+        return string
+
 
 
 ################################################################################################
