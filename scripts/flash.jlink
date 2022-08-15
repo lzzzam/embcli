@@ -1,0 +1,6 @@
+si swd
+speed 4000
+r
+loadfile ./bin/test/systest/onChip/main.hex 0x08000000
+r
+q

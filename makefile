@@ -1,15 +1,17 @@
 .SECONDARY:
-ROOT   	= /Users/luca/Documents/GitHub/Embedded-Software/Tools
-CC_DIR 	= $(ROOT)/gcc-arm-none-eabi-10.3-2021.10/bin
-CC     	= $(CC_DIR)/arm-none-eabi-gcc
-GDB    	= $(CC_DIR)/arm-none-eabi-gdb
-AR     	= $(CC_DIR)/arm-none-eabi-ar
-SIZE   	= $(CC_DIR)/arm-none-eabi-size
-OBJCOPY = $(CC_DIR)/arm-none-eabi-objcopy
-OBJDUMP = $(CC_DIR)/arm-none-eabi-objdump
-READELF = $(CC_DIR)/arm-none-eabi-readelf
-LINT 	= $(ROOT)/cppcheck-2.8/cppcheck
-ASTYLE	= $(ROOT)/astyle/build/mac/bin/Astyle
+ROOT   		= /Users/luca/Documents/GitHub/Embedded-Software/Tools
+JLINK_DIR 	= /Applications/SEGGER/JLink_V672d
+CC_DIR 		= $(ROOT)/gcc-arm-none-eabi-10.3-2021.10/bin
+CC     		= $(CC_DIR)/arm-none-eabi-gcc
+GDB    		= $(CC_DIR)/arm-none-eabi-gdb
+AR     		= $(CC_DIR)/arm-none-eabi-ar
+SIZE   		= $(CC_DIR)/arm-none-eabi-size
+OBJCOPY 	= $(CC_DIR)/arm-none-eabi-objcopy
+OBJDUMP 	= $(CC_DIR)/arm-none-eabi-objdump
+READELF 	= $(CC_DIR)/arm-none-eabi-readelf
+LINT 		= $(ROOT)/cppcheck-2.8/cppcheck
+ASTYLE		= $(ROOT)/astyle/build/mac/bin/Astyle
+JLINK 		= $(JLINK_DIR)/JLinkExe
 
 CFLAGS += -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -flto \
 		  -Wunused -Wuninitialized -Wall -Wextra -Wmissing-declarations -Wconversion -Wpointer-arith -Wshadow -Wlogical-op \
@@ -94,52 +96,46 @@ $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)/test/unittest
 	@echo '$(BUILD_DIR) created'
 
-.PHONY: clean
-clean:
-	rm -r $(BUILD_DIR)
-
-.PHONY: size
-size: $(OUTPUT).elf
-	$(SIZE) $^
-
-.PHONY: symbol
-symbol: $(OUTPUT).elf
-	$(READELF) -s $^
-
-.PHONY: sections
-sections: $(OUTPUT).elf
-	$(READELF) -S $^
-
-.PHONY: disassembly
-disassembly: $(OUTPUT).elf
-	@echo 'Generate Disassemby: $(OUTPUT).s'
-	@echo 'Invoking: arm-none-eabi-objdump'
-	$(OBJDUMP) -d -S $(OUTPUT).elf > $(OUTPUT).s
-
-.PHONY: setup
 setup:
 	@echo 'Setup python environment'
 	@echo 'Invoking: pip'
 	pip install -r requirements.txt
 
-.PHONY: openocd
+flash:
+	$(JLINK) -device STM32F303RE -CommandFile ./scripts/flash.jlink
+
 openocd:
 	openocd -f interface/jlink.cfg -c "transport select swd" -f target/stm32f3x.cfg
 
-.PHONY: debug
 debug:
 	arm-none-eabi-gdb $(OUTPUT).elf -ex "target remote tcp::3333"
 
 # Command to interact with openOCD and flash the image.elf
 #-ex "monitor init"-ex "monitor reset" -ex "monitor flash write_image erase $(OUTPUT).elf"
 
-.PHONY: lint
 lint:
 	$(LINT) .
 
-.PHONY: lint
 format:
 	$(ASTYLE) --style=allman  --attach-closing-while  --indent-switches --indent-continuation= -n --recursive  ./*.c,*.h
+
+clean:
+	rm -r $(BUILD_DIR)
+
+size: $(OUTPUT).elf
+	$(SIZE) $^
+
+symbol: $(OUTPUT).elf
+	$(READELF) -s $^
+
+sections: $(OUTPUT).elf
+	$(READELF) -S $^
+
+disassembly: $(OUTPUT).elf
+	@echo 'Generate Disassemby: $(OUTPUT).s'
+	@echo 'Invoking: arm-none-eabi-objdump'
+	$(OBJDUMP) -d -S $(OUTPUT).elf > $(OUTPUT).s
+
 
 .PHONY: foo
 foo: $(OBJS)
