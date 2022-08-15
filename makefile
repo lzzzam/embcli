@@ -62,12 +62,15 @@ LIB_OBJS  = $(foreach file, $(LIB_SRC),$(BUILD_DIR)/$(file:%.c=%.o))
 all: $(BUILD_DIR) $(OUTPUT).elf $(OUTPUT).hex
 
 %.hex: %.elf
+	@echo 'Generating HEX: $<'
 	$(OBJCOPY) -O ihex $^ $@
+	@echo ' '
 
 %.elf: %.o $(OBJS) $(LIB).a
 	@echo 'Building binary: $<'
 	@echo 'Invoking: GNU ARM Cross C Compiler'
 	$(CC) $(OBJS) $(CFLAGS) $(LFLAGS) -L"./bin" -l$(LIB) -o $@
+	@echo ' '
 
 $(BUILD_DIR)/%.o: %.c 
 	@echo 'Building file: $<'
@@ -79,6 +82,7 @@ $(BUILD_DIR)/%.o: %.c
 $(LIB).a: $(LIB_OBJS)
 	@echo 'Generating library: $@'
 	$(AR) -rc $(BUILD_DIR)/lib$(LIB).a $^ --plugin $(PLUGIN) 
+	@echo ' '
 
 $(BUILD_DIR):
 	@echo 'Creating build directories'
