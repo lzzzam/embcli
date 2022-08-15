@@ -1,13 +1,14 @@
 .SECONDARY:
-ROOT   = /Users/luca/Documents/GitHub/Embedded-Software/Tools
-CC_DIR = $(ROOT)/gcc-arm-none-eabi-10.3-2021.10/bin
-CC     = $(CC_DIR)/arm-none-eabi-gcc
-GDB    = $(CC_DIR)/arm-none-eabi-gdb
-AR     = $(CC_DIR)/arm-none-eabi-ar
-SIZE   = $(CC_DIR)/arm-none-eabi-size
+ROOT   	= /Users/luca/Documents/GitHub/Embedded-Software/Tools
+CC_DIR 	= $(ROOT)/gcc-arm-none-eabi-10.3-2021.10/bin
+CC     	= $(CC_DIR)/arm-none-eabi-gcc
+GDB    	= $(CC_DIR)/arm-none-eabi-gdb
+AR     	= $(CC_DIR)/arm-none-eabi-ar
+SIZE   	= $(CC_DIR)/arm-none-eabi-size
 OBJCOPY = $(CC_DIR)/arm-none-eabi-objcopy
 OBJDUMP = $(CC_DIR)/arm-none-eabi-objdump
 READELF = $(CC_DIR)/arm-none-eabi-readelf
+LINT 	= $(ROOT)/cppcheck-2.8/cppcheck
 
 CFLAGS += -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -flto \
 		  -Wunused -Wuninitialized -Wall -Wextra -Wmissing-declarations -Wconversion -Wpointer-arith -Wshadow -Wlogical-op \
@@ -116,11 +117,20 @@ setup:
 	@echo 'Invoking: pip'
 	pip install -r requirements.txt
 
+.PHONY: openocd
 openocd:
 	openocd -f interface/jlink.cfg -c "transport select swd" -f target/stm32f3x.cfg
 
+.PHONY: debug
 debug:
 	arm-none-eabi-gdb $(OUTPUT).elf -ex "target remote tcp::3333"
+
+# Command to interact with openOCD and flash the image.elf
+#-ex "monitor init"-ex "monitor reset" -ex "monitor flash write_image erase $(OUTPUT).elf"
+
+.PHONY: lint
+lint:
+	$(LINT) .
 
 .PHONY: foo
 foo: $(OBJS)

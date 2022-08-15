@@ -223,20 +223,28 @@ __VECTOR_TABLE__ pHandler __vector_table[] =
     FPU_IRQHandler //
 };
 
+typedef struct {
+    uint8_t *start_addr;
+    uint8_t *end_addr;
+} ram_section_t;
 
 // Main entry point after reset
 void Reset_Handler(void)
 {
+    ram_section_t data  = {(uint8_t *)&__data_start__   , (uint8_t *)&__data_end__};
+    ram_section_t bss   = {(uint8_t *)&__bss_start__    , (uint8_t *)&__bss_end__};
+
     // Copy .data section from FLASH to RAM
     uint8_t *src = (uint8_t *)&__etext;
-    for (uint8_t *dst=(uint8_t *)&__data_start__; dst<(uint8_t *)&__data_end__; dst++)
+
+    for (uint8_t *dst=data.start_addr; dst<data.end_addr; dst++)
     {
         *dst = *src;
         src++;
     }
 
     // Initialize .bss section with zero
-    for (uint8_t *dst=(uint8_t *)&__bss_start__; dst<(uint8_t *)&__bss_end__; dst++)
+    for (uint8_t *dst=bss.start_addr; dst<bss.end_addr; dst++)
     {
         *dst = 0;
     }
