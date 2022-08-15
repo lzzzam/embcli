@@ -25,15 +25,15 @@ cli_cmd_vector  cliCmdTable[CLI_CMD_TABLE_SIZE] = \
 };
 
 int main(void)
-{	
-	uint8_t	inBuf[100];
+{
+    uint8_t	inBuf[100];
     uint8_t outBuf[100];
 
     while(1)
-	{
-		// Listen till new command is received
-		cli_status status = cli_transceive(inBuf, outBuf);;
-	}
+    {
+        // Listen till new command is received
+        cli_status status = cli_transceive(inBuf, outBuf);;
+    }
 }
 
 /****************************************************************
@@ -46,26 +46,26 @@ USART_handle    USART3_handle;
 cli_cfg         SerialCfg = {&USART3_write_char, &USART3_read_char};
 
 
-/* 
+/*
  * Wrapper to adapt __USART_write_char interface in order
- * to be properly used by the cli module. 
- * This function is linked to the main read function pointer 
- * during cli_init, see @ref cli_write_char() 
+ * to be properly used by the cli module.
+ * This function is linked to the main read function pointer
+ * during cli_init, see @ref cli_write_char()
  */
 void USART3_write_char(uint8_t data)
 {
-	__USART_write_char(&USART3_handle, data);
+    __USART_write_char(&USART3_handle, data);
 }
 
-/* 
+/*
  * Wrapper to adapt __USART_read_char interface in order
- * to be properly used by the cli module. 
- * This function is linked to the main read function pointer 
- * during cli_init, see @ref cli_read_char() 
+ * to be properly used by the cli module.
+ * This function is linked to the main read function pointer
+ * during cli_init, see @ref cli_read_char()
  */
 void USART3_read_char(uint8_t *data)
 {
-	__USART_read_char(&USART3_handle, data);
+    __USART_read_char(&USART3_handle, data);
 }
 
 /*
@@ -73,13 +73,13 @@ void USART3_read_char(uint8_t *data)
  * module during Startup, this function is called during Reset_Handler.
  */
 void systemInit(void)
-{	
-    // Initialize embcli module with the Serial 
-	// read\write functions to be used
-	cli_init(&SerialCfg);
-	
+{
+    // Initialize embcli module with the Serial
+    // read\write functions to be used
+    cli_init(&SerialCfg);
+
     // Enable GPIO Port A adn B - Peripheral clock
-	__GPIO_EnPCLK(GPIOA);
+    __GPIO_EnPCLK(GPIOA);
     __GPIO_EnPCLK(GPIOB);
 
     // Configure PA5 as output for LED driving
@@ -89,10 +89,10 @@ void systemInit(void)
     __USART_EnPCLK(USART3);
 
     // Configure PB8 as USART3 - RX
-	__GPIO_init(GPIOB, 8, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_LOW, GPIO_NO_PUPD, GPIO_ALT_FNC_7);
+    __GPIO_init(GPIOB, 8, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_LOW, GPIO_NO_PUPD, GPIO_ALT_FNC_7);
 
     // Configure PB9 as USART3 - TX
-	__GPIO_init(GPIOB, 9, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_LOW, GPIO_NO_PUPD, GPIO_ALT_FNC_7);
+    __GPIO_init(GPIOB, 9, GPIO_MODE_AF, GPIO_OTYPE_PP, GPIO_SPEED_LOW, GPIO_NO_PUPD, GPIO_ALT_FNC_7);
 
     // Initialize USART3 handle
     USART3_handle.pUSARTx = USART3;
@@ -107,23 +107,24 @@ void systemInit(void)
 
 
 /****************************************************************
- *                       TEST FUNCTIONS 
+ *                       TEST FUNCTIONS
  ****************************************************************/
 
-typedef struct {
+typedef struct
+{
     uint8_t length;
     uint8_t data[100];
 } TestBuffer;
 
 /**
  * @brief Echo the received input buffer into the output buffer
- * 
+ *
  * @param pInBuf    byte[0]    : length of input payload
  *                  byte[1:N]  : binary payload
- * 
+ *
  * @param pOutRsp   byte[0]    : length of output payload
  *                  byte[1:N]  : echo binary payload
- * @return cli_status 
+ * @return cli_status
  */
 cli_status Echo(uint8_t *pInBuf, cli_rsp *pOutRsp)
 {
@@ -132,7 +133,7 @@ cli_status Echo(uint8_t *pInBuf, cli_rsp *pOutRsp)
 
     inBuf   = (TestBuffer *)pInBuf;
     outBuf  = (TestBuffer *)pOutRsp->data;
-    
+
     // Copy input buffer length to output buffer
     outBuf->length = inBuf->length;
 
@@ -145,11 +146,11 @@ cli_status Echo(uint8_t *pInBuf, cli_rsp *pOutRsp)
 }
 
 /**
- * @brief Turn on LED 
- * 
+ * @brief Turn on LED
+ *
  * @param pInBuf    not used
  * @param pOutRsp   byte[0]    : length of output payload
- * @return cli_status 
+ * @return cli_status
  */
 cli_status Led_ON(uint8_t *pInBuf, cli_rsp *pOutRsp)
 {
@@ -162,16 +163,16 @@ cli_status Led_ON(uint8_t *pInBuf, cli_rsp *pOutRsp)
 }
 
 /**
- * @brief Turn off LED 
- * 
+ * @brief Turn off LED
+ *
  * @param pInBuf    not used
  * @param pOutRsp   byte[0]    : length of output payload
- * @return cli_status 
+ * @return cli_status
  */
 cli_status Led_OFF(uint8_t *pInBuf, cli_rsp *pOutRsp)
 {
     pOutRsp->length = 0;
-    
+
     // Drive GPIO PA5 Low
     __GPIO_writePin(GPIOA, 5, FALSE);
 
@@ -180,10 +181,10 @@ cli_status Led_OFF(uint8_t *pInBuf, cli_rsp *pOutRsp)
 
 /**
  * @brief Generic Test function to be called from CLI loop
- * 
+ *
  * @param pInBuf input data buffer to receive data from host
  * @param pOutRsp output struct to send response data to host
- * @return cli_status 
+ * @return cli_status
  */
 cli_status Test(uint8_t *pInBuf, cli_rsp *pOutRsp)
 {

@@ -9,6 +9,7 @@ OBJCOPY = $(CC_DIR)/arm-none-eabi-objcopy
 OBJDUMP = $(CC_DIR)/arm-none-eabi-objdump
 READELF = $(CC_DIR)/arm-none-eabi-readelf
 LINT 	= $(ROOT)/cppcheck-2.8/cppcheck
+ASTYLE	= $(ROOT)/astyle/build/mac/bin/Astyle
 
 CFLAGS += -mcpu=cortex-m4 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -flto \
 		  -Wunused -Wuninitialized -Wall -Wextra -Wmissing-declarations -Wconversion -Wpointer-arith -Wshadow -Wlogical-op \
@@ -131,6 +132,10 @@ debug:
 .PHONY: lint
 lint:
 	$(LINT) .
+
+.PHONY: lint
+format:
+	$(ASTYLE) --style=allman  --attach-closing-while  --indent-switches --indent-continuation= -n --recursive  ./*.c,*.h
 
 .PHONY: foo
 foo: $(OBJS)

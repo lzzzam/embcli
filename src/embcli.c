@@ -6,12 +6,12 @@ static void         (*cli_write_char)(uint8_t data);
 
 cli_status cli_init(cli_cfg *pCfg)
 {
-    if ((pCfg->pReadChar == NULL) || 
-        (pCfg->pWriteChar == NULL))
+    if ((pCfg->pReadChar == NULL) ||
+            (pCfg->pWriteChar == NULL))
     {
         return CLI_STATUS_FAIL;
     }
-    
+
     cli_read_char  = pCfg->pReadChar;
     cli_write_char = pCfg->pWriteChar;
 
@@ -36,7 +36,7 @@ cli_status cli_receive_cmd(uint8_t *pInBuf)
             length = data;
             length_received = 1;
         }
-        
+
         // Store data into buffer
         pInBuf[counter] = data;
         counter++;
@@ -57,7 +57,7 @@ void cli_transmit_rsp(cli_out *pOutString)
     uint8_t length = pOutString->response.length;
     uint8_t *buf = pOutString->response.data;
     cli_status status = pOutString->status;
-   
+
     // Write length = (response data length + status field + length field)
     cli_write_char(CLI_OUTPUT_HEADER_SIZE + length);
 
@@ -74,7 +74,7 @@ void cli_transmit_rsp(cli_out *pOutString)
 cli_status cli_command_handler(cli_in *pInString, cli_out *pOutString)
 {
     uint8_t cmdFound = 0;
-    
+
     // Search from command Group & ID
     uint8_t group = pInString->command.group;
     uint8_t id    = pInString->command.id;
@@ -84,15 +84,15 @@ cli_status cli_command_handler(cli_in *pInString, cli_out *pOutString)
         if ((group == cliCmdTable[i].group) && (id == cliCmdTable[i].id))
         {
             // Call command and pass input data and output struct
-            pOutString->status = cliCmdTable[i].func(pInString->command.data, 
-                                                  &(pOutString->response));
+            pOutString->status = cliCmdTable[i].func(pInString->command.data,
+                                 &(pOutString->response));
 
             // Updated flag
             cmdFound = 1;
 
             break;
         }
-    } 
+    }
 
     // Check if command exist
     if (!cmdFound)

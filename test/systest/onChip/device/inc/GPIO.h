@@ -71,12 +71,12 @@ void __GPIO_EnPCLK(GPIO_t *pGPIOx);
  * @note					- Must be called before using the Pin
  ************************************************************************/
 void __GPIO_init(GPIO_t *pGPIOx,			/*GPIOx with x = A,B,C...H	*/
-				 uint8_t PinNumber,			/*0-15						*/
-				 uint8_t PinMode,			/*@GPIO_PinMode				*/
-				 uint8_t PinType,			/*@GPIO_PinType				*/
-				 uint8_t PinSpeed,			/*@GPIO_PinSpeed			*/
-				 uint8_t PinPuPdControl,	/*@GPIO_PinPuPd				*/
-				 uint8_t PinAlternateFnc);	/*@GPIO_PinAltFnc			*/
+                 uint8_t PinNumber,			/*0-15						*/
+                 uint8_t PinMode,			/*@GPIO_PinMode				*/
+                 uint8_t PinType,			/*@GPIO_PinType				*/
+                 uint8_t PinSpeed,			/*@GPIO_PinSpeed			*/
+                 uint8_t PinPuPdControl,	/*@GPIO_PinPuPd				*/
+                 uint8_t PinAlternateFnc);	/*@GPIO_PinAltFnc			*/
 
 
 
@@ -104,7 +104,7 @@ void __GPIO_reset(GPIO_t *pGPIOx);			/*GPIOx with x = A,B,C...H	*/
  * @note					- The pin must be initialized as input
  ************************************************************************/
 uint8_t __GPIO_readPin(GPIO_t *pGPIOx,		/*GPIOx with x = A,B,C...H	*/
-		 	 	 	   uint8_t PinNumber);	/*0-15						*/
+                       uint8_t PinNumber);	/*0-15						*/
 
 
 
@@ -132,8 +132,8 @@ uint16_t __GPIO_readPort(GPIO_t *pGPIOx);	/*GPIOx with x = A,B,C...H	*/
  * @note					- The pin must be initialized as output
  ************************************************************************/
 void __GPIO_writePin(GPIO_t *pGPIOx,		/*GPIOx with x = A,B,C...H	*/
-		 	 	 	 uint8_t PinNumber,		/*0-15						*/
-					 uint8_t Value);		/*TRUE or FALSE				*/
+                     uint8_t PinNumber,		/*0-15						*/
+                     uint8_t Value);		/*TRUE or FALSE				*/
 
 
 
@@ -147,7 +147,7 @@ void __GPIO_writePin(GPIO_t *pGPIOx,		/*GPIOx with x = A,B,C...H	*/
  * @note					- Write to the entire port
  ************************************************************************/
 void __GPIO_writePort(GPIO_t *pGPIOx,		/*GPIOx with x = A,B,C...H	*/
-					  uint16_t Value);		/*0-65535					*/
+                      uint16_t Value);		/*0-65535					*/
 
 
 
@@ -162,7 +162,7 @@ void __GPIO_writePort(GPIO_t *pGPIOx,		/*GPIOx with x = A,B,C...H	*/
  * @note					- The pin must be initialized as output
  ************************************************************************/
 void __GPIO_tooglePin(GPIO_t *pGPIOx,		/*GPIOx with x = A,B,C...H	*/
- 	 	 	 	 	  uint8_t PinNumber);	/*0-15						*/
+                      uint8_t PinNumber);	/*0-15						*/
 
 
 
@@ -179,8 +179,8 @@ void __GPIO_tooglePin(GPIO_t *pGPIOx,		/*GPIOx with x = A,B,C...H	*/
  * @note					- The pin must be initialized in Interrupt Mode
  ************************************************************************/
 void __GPIO_IRQconfig(uint8_t PinNumber,	/*0-15						*/
-					  uint8_t EnOrDis,		/*EN or DIS					*/
-					  uint8_t Priority);	/*0-15 where 0 is Highest   */
+                      uint8_t EnOrDis,		/*EN or DIS					*/
+                      uint8_t Priority);	/*0-15 where 0 is Highest   */
 
 
 

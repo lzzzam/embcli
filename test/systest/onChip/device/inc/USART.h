@@ -10,35 +10,40 @@
 
 #include <STM32F303RE.h>
 
-typedef enum{
+typedef enum
+{
     USART_NO_PARITY,
     USART_EVEN_PARITY,
     USART_ODD_PARITY
 } USART_Parity;
 
-typedef enum{
+typedef enum
+{
     USART_0_5_STOP_BITS,
     USART_1_STOP_BITS,
     USART_1_5_STOP_BITS,
     USART_2_STOP_BITS,
 } USART_Stop;
 
-typedef enum{
+typedef enum
+{
     USART_WORD_7_BITS,
     USART_WORD_8_BITS,
     USART_WORD_9_BITS
 } USART_WordLen;
 
-typedef struct{
+typedef struct
+{
     uint32_t        Speed;
     USART_Parity    ParityBit;
     USART_Stop      StopBit;
     USART_WordLen   WordLen;
 } USART_Config;
 
-typedef struct{
-	USART_t     *pUSARTx;		   /*Base address of USARTx peripheral 			*/
-	USART_Config pUSARTx_config;   /*USARTx configuration 						*/
+typedef struct
+{
+    USART_t     *pUSARTx;		   /*Base address of USARTx peripheral 			*/
+    USART_Config pUSARTx_config;   /*USARTx configuration 						*/
 } USART_handle;
 
 void __USART_EnPCLK(USART_t *pUSARTx);

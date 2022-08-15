@@ -4,7 +4,7 @@
 #define __RESET_HANDLER__ __attribute__ ((section(".reset_handler")))
 #define __DEFAULT_HANDLER__ __attribute__ ((weak, alias ("Default_Handler"), section(".irq_handlers")))
 #define __VECTOR_TABLE__ __attribute__ ((section(".isr_vector"),used))
-#define __STACK__ __attribute__((section(".stack"))) 
+#define __STACK__ __attribute__((section(".stack")))
 
 // Boundaries of .text, .data and .bss sections as declared in linker script
 extern uint32_t __etext;
@@ -29,9 +29,9 @@ void __WEAK_FUNCTION__ Default_Handler(void);
 // Intrinsic function to set Main Stack Pointer
 void __setMSP(uint32_t address);
 
-/* 
+/*
  * Forward declaration of the specific IRQ handlers. These are aliased
- * to the Default_Handler, which is a 'forever' loop. 
+ * to the Default_Handler, which is a 'forever' loop.
  */
 
 // Main entry point
@@ -118,7 +118,7 @@ void __DEFAULT_HANDLER__ FPU_IRQHandler(void);
 typedef void (* const pHandler)(void);
 
 // ISR vector table
-__VECTOR_TABLE__ pHandler __vector_table[] = 
+__VECTOR_TABLE__ pHandler __vector_table[] =
 {
     (pHandler) &__StackTop,                     // Top of Stack
     Reset_Handler,                              // The reset handler
@@ -223,7 +223,8 @@ __VECTOR_TABLE__ pHandler __vector_table[] =
     FPU_IRQHandler //
 };
 
-typedef struct {
+typedef struct
+{
     uint8_t *start_addr;
     uint8_t *end_addr;
 } ram_section_t;
@@ -231,8 +232,8 @@ typedef struct {
 // Main entry point after reset
 void Reset_Handler(void)
 {
-    ram_section_t data  = {(uint8_t *)&__data_start__   , (uint8_t *)&__data_end__};
-    ram_section_t bss   = {(uint8_t *)&__bss_start__    , (uint8_t *)&__bss_end__};
+    ram_section_t data  = {(uint8_t *)&__data_start__, (uint8_t *)&__data_end__};
+    ram_section_t bss   = {(uint8_t *)&__bss_start__, (uint8_t *)&__bss_end__};
 
     // Copy .data section from FLASH to RAM
     uint8_t *src = (uint8_t *)&__etext;
@@ -254,9 +255,9 @@ void Reset_Handler(void)
 
     // Reset MSP
     asm ("mov r0, %0\n\t"
-        "msr msp, r0"
-        :
-        : "r" (&__StackTop));
+         "msr msp, r0"
+         :
+         : "r" (&__StackTop));
 
     // Jump to main
     main();
@@ -270,8 +271,8 @@ void Reset_Handler(void)
 // handler is not present in the application code.
 void __attribute__ ((section(".irq_handlers"))) Default_Handler(void)
 {
-  while (1)
-    ; // Infinite Loop
+    while (1)
+        ; // Infinite Loop
 }
 
 void __attribute__ ((naked)) __setMSP(uint32_t address)

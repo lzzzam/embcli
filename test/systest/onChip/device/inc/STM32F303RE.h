@@ -582,173 +582,183 @@
 /********************************************************************************/
 
 //Reset and Clock Control
-typedef struct {
-	__IO uint32_t 	CR;
-	__IO uint32_t	CFGR;
-	__IO uint32_t	CIR;
-	__IO uint32_t	APB2RSTR;
-	__IO uint32_t	APB1RSTR;
-	__IO uint32_t	AHBENR;
-	__IO uint32_t	APB2ENR;
-	__IO uint32_t	APB1ENR;
-	__IO uint32_t	BDCR;
-	__IO uint32_t	CSR;
-	__IO uint32_t	AHBRSTR;
-	__IO uint32_t	CFGR2;
-	__IO uint32_t	CFGR3;
-}RCC_t;
+typedef struct
+{
+    __IO uint32_t 	CR;
+    __IO uint32_t	CFGR;
+    __IO uint32_t	CIR;
+    __IO uint32_t	APB2RSTR;
+    __IO uint32_t	APB1RSTR;
+    __IO uint32_t	AHBENR;
+    __IO uint32_t	APB2ENR;
+    __IO uint32_t	APB1ENR;
+    __IO uint32_t	BDCR;
+    __IO uint32_t	CSR;
+    __IO uint32_t	AHBRSTR;
+    __IO uint32_t	CFGR2;
+    __IO uint32_t	CFGR3;
+} RCC_t;
 
 //GPIOx
-typedef struct {
-	__IO uint32_t 	MODER;
-	__IO uint32_t	OTYPER;
-	__IO uint32_t	OSPEEDR;
-	__IO uint32_t	PUPDR;
-	__IO uint32_t	IDR;
-	__IO uint32_t	ODR;
-	__IO uint32_t	BSRR;
-	__IO uint32_t	LCKR;
-	__IO uint32_t	AFR[2];
-	__IO uint32_t	BRR;
-}GPIO_t;
+typedef struct
+{
+    __IO uint32_t 	MODER;
+    __IO uint32_t	OTYPER;
+    __IO uint32_t	OSPEEDR;
+    __IO uint32_t	PUPDR;
+    __IO uint32_t	IDR;
+    __IO uint32_t	ODR;
+    __IO uint32_t	BSRR;
+    __IO uint32_t	LCKR;
+    __IO uint32_t	AFR[2];
+    __IO uint32_t	BRR;
+} GPIO_t;
 
 //EXTI
-typedef struct{
-	__IO uint32_t 	IMR1;
-	__IO uint32_t	EMR1;
-	__IO uint32_t	RTSR1;
-	__IO uint32_t	FTSR1;
-	__IO uint32_t	SWIER1;
-	__IO uint32_t	PR1;
-	__IO uint32_t	IMR2;
-	__IO uint32_t	EMR2;
-	__IO uint32_t	RTSR2;
-	__IO uint32_t	FTSR2;
-	__IO uint32_t	SWIER2;
-	__IO uint32_t	PR2;
-}EXTI_t;
+typedef struct
+{
+    __IO uint32_t 	IMR1;
+    __IO uint32_t	EMR1;
+    __IO uint32_t	RTSR1;
+    __IO uint32_t	FTSR1;
+    __IO uint32_t	SWIER1;
+    __IO uint32_t	PR1;
+    __IO uint32_t	IMR2;
+    __IO uint32_t	EMR2;
+    __IO uint32_t	RTSR2;
+    __IO uint32_t	FTSR2;
+    __IO uint32_t	SWIER2;
+    __IO uint32_t	PR2;
+} EXTI_t;
 
 //System Configuration Controller
-typedef struct{
-	__IO uint32_t 	CFGR1;
-	__IO uint32_t	RCR;
-	__IO uint32_t	EXTICR[4];
-	__IO uint32_t	CFGR2;
-	__IO uint32_t	CFGR3;
-	__IO uint32_t	CFGR4;
-}SYSCFG_t;
+typedef struct
+{
+    __IO uint32_t 	CFGR1;
+    __IO uint32_t	RCR;
+    __IO uint32_t	EXTICR[4];
+    __IO uint32_t	CFGR2;
+    __IO uint32_t	CFGR3;
+    __IO uint32_t	CFGR4;
+} SYSCFG_t;
 
-typedef struct{
-	__IO uint32_t 	CR1;
-	__IO uint32_t	CR2;
-	__IO uint32_t	SR;
-	__IO uint32_t	DR;
-	__IO uint32_t	CRCPR;
-	__IO uint32_t	RXCRCR;
-	__IO uint32_t	TXCRCR;
-	__IO uint32_t	I2SCFGR;
-	__IO uint32_t	I2SPR;
-}SPI_t;
+typedef struct
+{
+    __IO uint32_t 	CR1;
+    __IO uint32_t	CR2;
+    __IO uint32_t	SR;
+    __IO uint32_t	DR;
+    __IO uint32_t	CRCPR;
+    __IO uint32_t	RXCRCR;
+    __IO uint32_t	TXCRCR;
+    __IO uint32_t	I2SCFGR;
+    __IO uint32_t	I2SPR;
+} SPI_t;
 
-typedef struct{
-	__IO uint32_t 	CR1;
-	__IO uint32_t	CR2;
-	__IO uint32_t	OAR1;
-	__IO uint32_t	OAR2;
-	__IO uint32_t	TIMINGR;
-	__IO uint32_t	TIMEOUTR;
-	__IO uint32_t	ISR;
-	__IO uint32_t	ICR;
-	__IO uint32_t	PECR;
-	__IO uint32_t	RXDR;
-	__IO uint32_t	TXDR;
-}I2C_t;
+typedef struct
+{
+    __IO uint32_t 	CR1;
+    __IO uint32_t	CR2;
+    __IO uint32_t	OAR1;
+    __IO uint32_t	OAR2;
+    __IO uint32_t	TIMINGR;
+    __IO uint32_t	TIMEOUTR;
+    __IO uint32_t	ISR;
+    __IO uint32_t	ICR;
+    __IO uint32_t	PECR;
+    __IO uint32_t	RXDR;
+    __IO uint32_t	TXDR;
+} I2C_t;
 
-typedef struct{
-	__IO uint32_t 	ACR;
-	__IO uint32_t	KEYR;
-	__IO uint32_t	OPTKEYR;
-	__IO uint32_t	SR;
-	__IO uint32_t	CR;
-	__IO uint32_t	AR;
-	__IO uint32_t	OBR;
-	__IO uint32_t	WRPR;
-}FLITF_t;
+typedef struct
+{
+    __IO uint32_t 	ACR;
+    __IO uint32_t	KEYR;
+    __IO uint32_t	OPTKEYR;
+    __IO uint32_t	SR;
+    __IO uint32_t	CR;
+    __IO uint32_t	AR;
+    __IO uint32_t	OBR;
+    __IO uint32_t	WRPR;
+} FLITF_t;
 
 
-typedef struct{
-	__IO uint32_t CR1;
-	__IO uint32_t CR2;
-	__IO uint32_t CR3;
-	__IO uint32_t BRR;
-	__IO uint32_t GTPR;
-	__IO uint32_t RTOR;
-	__IO uint32_t RQR;
-	__IO uint32_t ISR;
-	__IO uint32_t ICR;
-	__IO uint32_t RDR;
-	__IO uint32_t TDR;
-}USART_t;
+typedef struct
+{
+    __IO uint32_t CR1;
+    __IO uint32_t CR2;
+    __IO uint32_t CR3;
+    __IO uint32_t BRR;
+    __IO uint32_t GTPR;
+    __IO uint32_t RTOR;
+    __IO uint32_t RQR;
+    __IO uint32_t ISR;
+    __IO uint32_t ICR;
+    __IO uint32_t RDR;
+    __IO uint32_t TDR;
+} USART_t;
 
 
 //ADC
-typedef struct {
-	__IO uint32_t 	ISR;
-	__IO uint32_t	IER;
-	__IO uint32_t	CR;
-	__IO uint32_t	CFGR;
-		 uint32_t	RESERVED_01;
-	__IO uint32_t	SMPR1;
-	__IO uint32_t	SMPR2;
-		 uint32_t	RESERVED_02;
-	__IO uint32_t	TR1;
-	__IO uint32_t	TR2;
-	__IO uint32_t	TR3;
-		 uint32_t	RESERVED_03;
-	__IO uint32_t	SQR1;
-	__IO uint32_t	SQR2;
-	__IO uint32_t	SQR3;
-	__IO uint32_t	SQR4;
-	__IO uint32_t	DR;
-		 uint32_t	RESERVED_04;
-		 uint32_t	RESERVED_05;
-	__IO uint32_t	JSQR;
-	 	 uint32_t	RESERVED_06;
-	 	 uint32_t	RESERVED_07;
-	 	 uint32_t	RESERVED_08;
-	 	 uint32_t	RESERVED_09;
-	__IO uint32_t	OFR1;
-	__IO uint32_t	OFR2;
-	__IO uint32_t	OFR3;
-	__IO uint32_t	OFR4;
-	 	 uint32_t	RESERVED_10;
-	 	 uint32_t	RESERVED_11;
-	 	 uint32_t	RESERVED_12;
-	 	 uint32_t	RESERVED_13;
-	__IO uint32_t	JDR1;
-	__IO uint32_t	JDR2;
-	__IO uint32_t	JDR3;
-	__IO uint32_t	JDR4;
-	 	 uint32_t	RESERVED_14;
-	 	 uint32_t	RESERVED_15;
-	 	 uint32_t	RESERVED_16;
-	 	 uint32_t	RESERVED_17;
-	__IO uint32_t	AWD2CR;
-	__IO uint32_t	AWD3CR;
-	 	 uint32_t	RESERVED_18;
-	 	 uint32_t	RESERVED_19;
-	__IO uint32_t	DIFSEL;
-	__IO uint32_t	CALFACT;
-}ADC_t;
+typedef struct
+{
+    __IO uint32_t 	ISR;
+    __IO uint32_t	IER;
+    __IO uint32_t	CR;
+    __IO uint32_t	CFGR;
+    uint32_t	RESERVED_01;
+    __IO uint32_t	SMPR1;
+    __IO uint32_t	SMPR2;
+    uint32_t	RESERVED_02;
+    __IO uint32_t	TR1;
+    __IO uint32_t	TR2;
+    __IO uint32_t	TR3;
+    uint32_t	RESERVED_03;
+    __IO uint32_t	SQR1;
+    __IO uint32_t	SQR2;
+    __IO uint32_t	SQR3;
+    __IO uint32_t	SQR4;
+    __IO uint32_t	DR;
+    uint32_t	RESERVED_04;
+    uint32_t	RESERVED_05;
+    __IO uint32_t	JSQR;
+    uint32_t	RESERVED_06;
+    uint32_t	RESERVED_07;
+    uint32_t	RESERVED_08;
+    uint32_t	RESERVED_09;
+    __IO uint32_t	OFR1;
+    __IO uint32_t	OFR2;
+    __IO uint32_t	OFR3;
+    __IO uint32_t	OFR4;
+    uint32_t	RESERVED_10;
+    uint32_t	RESERVED_11;
+    uint32_t	RESERVED_12;
+    uint32_t	RESERVED_13;
+    __IO uint32_t	JDR1;
+    __IO uint32_t	JDR2;
+    __IO uint32_t	JDR3;
+    __IO uint32_t	JDR4;
+    uint32_t	RESERVED_14;
+    uint32_t	RESERVED_15;
+    uint32_t	RESERVED_16;
+    uint32_t	RESERVED_17;
+    __IO uint32_t	AWD2CR;
+    __IO uint32_t	AWD3CR;
+    uint32_t	RESERVED_18;
+    uint32_t	RESERVED_19;
+    __IO uint32_t	DIFSEL;
+    __IO uint32_t	CALFACT;
+} ADC_t;
 
 
 //ADC common registers
-typedef struct{
-	__IO uint32_t	CSR;
-		 uint32_t	RESERVED_01;
-	__IO uint32_t	CCR;
-	__IO uint32_t	CDR;
-}ADC_common_t;
+typedef struct
+{
+    __IO uint32_t	CSR;
+    uint32_t	RESERVED_01;
+    __IO uint32_t	CCR;
+    __IO uint32_t	CDR;
+} ADC_common_t;
 
 /********************************************************************************/
 /*								include driver headers							*/

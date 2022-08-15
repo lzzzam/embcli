@@ -27,7 +27,7 @@ void __USART_EnPCLK(USART_t *pUSARTx)
             // Enable APB1 USART2 peripheral clock
             RCC->APB1ENR |= (1 << RCC_APB1ENR_USART2EN_Pos);
             break;
-        
+
         case (uint32_t)USART3:
             // Enable APB1 USART3 peripheral clock
             RCC->APB1ENR |= (1 << RCC_APB1ENR_USART3EN_Pos);
@@ -42,7 +42,7 @@ void __USART_EnPCLK(USART_t *pUSARTx)
             // Enable APB1 UART5 peripheral clock
             RCC->APB1ENR |= (1 << RCC_APB1ENR_UART5EN_Pos);
             break;
-    }   
+    }
 }
 
 void __USART_init(USART_handle *pUSARTx_h)
@@ -75,7 +75,7 @@ void __USART_init(USART_handle *pUSARTx_h)
             pUSARTx_h->pUSARTx->CR2 = (pUSARTx_h->pUSARTx->CR2 & ~((uint32_t)USART_CR2_STOP_Msk)) | (0x2 << USART_CR2_STOP_Pos);
             break;
     }
-    
+
     // 3. Configure Parity bit
     switch (pUSARTx_h->pUSARTx_config.ParityBit)
     {
@@ -94,7 +94,7 @@ void __USART_init(USART_handle *pUSARTx_h)
             pUSARTx_h->pUSARTx->CR1 = (pUSARTx_h->pUSARTx->CR1  & ~((uint32_t)USART_CR1_PS_Msk | (uint32_t)USART_CR1_PCE_Msk)) | USART_CR1_PS_Msk;
             break;
     }
-    
+
     // 4. Configure Word length
     switch (pUSARTx_h->pUSARTx_config.WordLen)
     {
@@ -113,7 +113,7 @@ void __USART_init(USART_handle *pUSARTx_h)
             pUSARTx_h->pUSARTx->CR1 = (pUSARTx_h->pUSARTx->CR1 & ~((uint32_t)USART_CR1_M1_Msk | (uint32_t)USART_CR1_M0_Msk)) | USART_CR1_M0_Msk;
             break;
     }
-    
+
     // 5. Configure Baudrate
     uint32_t sysclk = __RCC_getSYSCLK();
     uint32_t baudrate = pUSARTx_h->pUSARTx_config.Speed;
@@ -134,7 +134,7 @@ void __USART_write_char(USART_handle *pUSARTx_h, uint8_t data)
 {
     while (!(pUSARTx_h->pUSARTx->ISR & USART_ISR_TXE_Msk))
         ; // Wait till new byte can be transmitted
-    
+
     // Send new data
     pUSARTx_h->pUSARTx->TDR = data;
 }
