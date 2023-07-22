@@ -2,3 +2,4 @@ bin/**
 test/systest/offChip/__pycache__/**
 test/systest/offChip/host/__pycache__/**
 log/**
+*.DS_*
