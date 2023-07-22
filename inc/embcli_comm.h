@@ -15,24 +15,27 @@
 #define CLI_OUTPUT_HEADER_SIZE           CLI_HEADER_LENGTH_FIELD_SIZE + \
                                             CLI_HEADER_STATUS_FIELD_SIZE
 
-typedef __attribute__((packed)) struct
+typedef struct __attribute__((packed))
 {
     uint8_t         group;
     uint8_t         id;
     uint8_t         data[CLI_BUF_SIZE];
-} cli_cmd;
+}
+cli_cmd;
 
-typedef __attribute__((packed)) struct
+typedef struct __attribute__((packed))
 {
     uint8_t         length;
     cli_cmd         command;
-} cli_in;
+}
+cli_in;
 
-typedef __attribute__((packed)) struct
+typedef struct __attribute__((packed))
 {
     cli_status      status;
     cli_rsp         response;
-} cli_out;
+}
+cli_out;
 
 cli_status   cli_receive_cmd(uint8_t *pInBuf);
 void         cli_transmit_rsp(cli_out *pOutString);

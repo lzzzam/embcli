@@ -24,24 +24,27 @@ typedef enum
     CLI_STATUS_ERROR_CMD_NOT_EXIST,
 } cli_status;
 
-typedef __attribute__((packed)) struct
+typedef struct __attribute__((packed))
 {
     void (*pWriteChar)(uint8_t);
     void (*pReadChar)(uint8_t *);
-} cli_cfg;
+}
+cli_cfg;
 
-typedef __attribute__((packed)) struct
+typedef struct __attribute__((packed))
 {
     uint8_t         length;
     uint8_t         data[CLI_BUF_SIZE];
-} cli_rsp;
+}
+cli_rsp;
 
-typedef __attribute__((packed)) struct
+typedef struct __attribute__((packed))
 {
     uint8_t         group;
     uint8_t         id;
     cli_status      (*func)(uint8_t *pInBuf, cli_rsp *pOutRsp);
-} cli_cmd_vector;
+}
+cli_cmd_vector;
 
 extern cli_cmd_vector cliCmdTable[CLI_CMD_TABLE_SIZE];
 
