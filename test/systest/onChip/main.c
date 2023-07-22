@@ -3,25 +3,26 @@
 #include "embcli.h"
 #include "string.h"
 
-cli_status Echo(uint8_t *pInBuf, cli_rsp *pOutRsp);
+cli_status  Echo(uint8_t *pInBuf, cli_rsp *pOutRsp);
 cli_status  Led_ON(uint8_t *pInBuf, cli_rsp *pOutRsp);
 cli_status  Led_OFF(uint8_t *pInBuf, cli_rsp *pOutRsp);
 cli_status  Test(uint8_t *pInBuf, cli_rsp *pOutRsp);
+cli_status  Read_Message(uint8_t *pInBuf, cli_rsp *pOutRsp);
 
 
 cli_cmd_vector  cliCmdTable[CLI_CMD_TABLE_SIZE] = \
 {
     //Group     Id      Function
-    { 0x00,     0x00,   Echo   },
-    { 0x00,     0x01,   Led_ON },
-    { 0x00,     0x02,   Led_OFF},
-    { 0x00,     0x03,   Test   },
-    { 0x00,     0x04,   Test   },
-    { 0x00,     0x05,   Test   },
-    { 0x00,     0x06,   Test   },
-    { 0x00,     0x07,   Test   },
-    { 0x00,     0x08,   Test   },
-    { 0x00,     0x09,   Test   }
+    { 0x00,     0x00,   Echo            },
+    { 0x00,     0x01,   Led_ON          },
+    { 0x00,     0x02,   Led_OFF         },
+    { 0x00,     0x03,   Read_Message    },
+    { 0x00,     0x04,   Test            },
+    { 0x00,     0x05,   Test            },
+    { 0x00,     0x06,   Test            },
+    { 0x00,     0x07,   Test            },
+    { 0x00,     0x08,   Test            },
+    { 0x00,     0x09,   Test            }
 };
 
 int main(void)
@@ -175,6 +176,25 @@ cli_status Led_OFF(uint8_t *pInBuf, cli_rsp *pOutRsp)
 
     // Drive GPIO PA5 Low
     __GPIO_writePin(GPIOA, 5, FALSE);
+
+    return CLI_STATUS_SUCCESS;
+}
+
+/**
+ * @brief Send a char string
+ *
+ * @param pInBuf    not used
+ * @param pOutRsp   byte[0]    : length of output payload
+ *                  byte[1-end]: char string
+ * @return cli_status
+ */
+cli_status Read_Message(uint8_t *pInBuf, cli_rsp *pOutRsp)
+{
+    char string[] = "Ciao, questo è un messagio!";
+
+    pOutRsp->length = sizeof(string);
+
+    memcpy(pOutRsp->data, string, sizeof(string));
 
     return CLI_STATUS_SUCCESS;
 }

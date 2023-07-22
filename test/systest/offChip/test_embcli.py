@@ -11,6 +11,7 @@ TestBuf    = Buffer(length=4, data=[1,2,3,4])
 ECHO       = Command(group=0, id=0, data=TestBuf)
 LED_ON     = Command(group=0, id=1)
 LED_OFF    = Command(group=0, id=2)
+READ_MSG   = Command(group=0, id=3)
 
 class Test_Library(unittest.TestCase):
     
@@ -46,6 +47,11 @@ class Test_Library(unittest.TestCase):
     def test_LED_OFF(self):
         rsp = executeCommand(LED_OFF)
         self.assertEqual(rsp.status, CLI_STATUS_SUCCESS)
+        
+    def test_READ_MSG(self):
+        rsp = executeCommand(READ_MSG)
+        self.assertEqual(rsp.status, CLI_STATUS_SUCCESS)
+        print(rsp.data)
 
 
 if __name__ == '__main__':
